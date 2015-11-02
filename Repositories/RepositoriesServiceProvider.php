@@ -34,7 +34,15 @@ class RepositoriesServiceProvider extends ServiceProvider {
      */
 	protected $defer = true;
 
-
+	/**
+	 * Boot
+	 * @return void
+	 */
+	public function boot()
+	{
+		$this->mapObjectResolvers();
+	}
+	
 	/**
 	 * Register
 	 * 
@@ -59,6 +67,19 @@ class RepositoriesServiceProvider extends ServiceProvider {
 		$this->app->alias(
 			'Cookbook\Filesystem\Repositories\FileRepository', 'Cookbook\Contracts\Filesystem\FileRepositoryContract'
 		);
+	}
+
+	/**
+	 * Map repositories to object resolver
+	 *
+	 * @return void
+	 */
+	public function mapObjectResolvers() {
+		$mappings = [
+			'file' => 'Cookbook\Filesystem\Repositories\FileRepository',
+		];
+
+		$this->app->make('Cookbook\Contracts\Core\ObjectResolverContract')->maps($mappings);
 	}
 
 	/**
