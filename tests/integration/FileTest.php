@@ -124,7 +124,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 		
 		$result = $bus->dispatch( new Cookbook\Filesystem\Commands\Files\FileCreateCommand($params));
 		
-		$this->d->dump($result);
+		$this->d->dump($result->toArray());
 		$this->assertTrue(Storage::has('files/test.jpg'));
 		
 	}
@@ -161,11 +161,11 @@ class FileTest extends Orchestra\Testbench\TestCase
 		
 		$result = $bus->dispatch( new Cookbook\Filesystem\Commands\Files\FileUpdateCommand($params, 1) );
 		
-		$this->assertTrue(is_object($result));
+		$this->assertTrue($result instanceof Cookbook\Core\Repositories\Model);
 		$this->assertTrue(is_int($result->id));
 		$this->assertEquals($result->caption, 'test file');
 		$this->assertEquals($result->description, 'test description');
-		$this->d->dump($result);
+		$this->d->dump($result->toArray());
 	}
 
 	// /**
@@ -223,10 +223,10 @@ class FileTest extends Orchestra\Testbench\TestCase
 
 		$result = $bus->dispatch( new Cookbook\Filesystem\Commands\Files\FileFetchCommand([], 1));
 
-		$this->assertTrue(is_object($result));
+		$this->assertTrue($result instanceof Cookbook\Core\Repositories\Model);
 		$this->assertTrue(is_int($result->id));
 		$this->assertEquals($result->url, 'files/1.jpg');
-		$this->d->dump($result);
+		$this->d->dump($result->toArray());
 		
 
 	}
@@ -240,9 +240,9 @@ class FileTest extends Orchestra\Testbench\TestCase
 		$bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
 		$result = $bus->dispatch( new Cookbook\Filesystem\Commands\Files\FileGetCommand([]));
 
-		$this->assertTrue(is_array($result));
+		$this->assertTrue($result instanceof Cookbook\Core\Repositories\Collection);
 		$this->assertEquals(count($result), 1);
-		$this->d->dump($result);
+		$this->d->dump($result->toArray());
 
 	}
 

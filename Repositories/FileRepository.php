@@ -13,10 +13,14 @@ namespace Cookbook\Filesystem\Repositories;
 use Cookbook\Contracts\Filesystem\FileRepositoryContract;
 use Cookbook\Core\Exceptions\Exception;
 use Cookbook\Core\Exceptions\NotFoundException;
+use Cookbook\Core\Facades\Trunk;
 use Cookbook\Core\Repositories\AbstractRepository;
+use Cookbook\Core\Repositories\Collection;
+use Cookbook\Core\Repositories\Model;
 use Cookbook\Core\Repositories\UsesCache;
 use Illuminate\Database\Connection;
-
+use Illuminate\Support\Facades\Config;
+use Carbon\Carbon;
 
 /**
  * FileRepository class
@@ -77,7 +81,7 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
 	protected function _create($model)
 	{
 		unset($model['file']);
-		$model['created_at'] = $model['updated_at'] = date('Y-m-d H:i:s');
+		$model['created_at'] = $model['updated_at'] = Carbon::now('UTC')->toDateTimeString();
 
 		// insert file in database
 		$fileId = $this->db->table('files')->insertGetId($model);
@@ -115,7 +119,7 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
 			throw new NotFoundException(['There is no file with that ID.']);
 		}
 
-		$model['updated_at'] = date('Y-m-d H:i:s');
+		$model['updated_at'] = Carbon::now('UTC')->toDateTimeString();
 
 		$this->db->table('files')->where('id', '=', $id)->update($model);
 
@@ -165,8 +169,20 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
 	 * 
 	 * @return array
 	 */
-	protected function _fetch($id)
+	protected function _fetch($id, $include = [])
 	{
+		$params = func_get_args();
+		
+		if(Trunk::has($params, 'file'))
+		{
+			$file = Trunk::get($id, 'file');
+			$file->clearIncluded();
+			$file->load($include);
+			$meta = ['id' => $id, 'include' => $include];
+			$file->setMeta($meta);
+			return $file;
+		}
+
 		$file = $this->db->table('files')->find($id);
 		
 		if( ! $file )
@@ -175,8 +191,18 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
 		}
 
 		$file->type = 'file';
+
+		$timezone = (Config::get('app.timezone'))?Config::get('app.timezone'):'UTC';
+		$file->created_at = Carbon::parse($file->created_at)->tz($timezone);
+		$file->updated_at = Carbon::parse($file->updated_at)->tz($timezone);
+
+		$result = new Model($file);
 		
-		return $file;
+		$result->setParams($params);
+		$meta = ['id' => $id, 'include' => $include];
+		$result->setMeta($meta);
+		$result->load($include);
+		return $result;
 	}
 
 	/**
@@ -184,11 +210,27 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
 	 * 
 	 * @return array
 	 */
-	protected function _get($filter = [], $offset = 0, $limit = 0, $sort = [])
+	protected function _get($filter = [], $offset = 0, $limit = 0, $sort = [], $include = [])
 	{
+		$params = func_get_args();
+
+		if(Trunk::has($params, 'file'))
+		{
+			$files = Trunk::get($params, 'file');
+			$files->clearIncluded();
+			$files->load($include);
+			$meta = [
+				'include' => $include
+			];
+			$files->setMeta($meta);
+			return $files;
+		}
+
 		$query = $this->db->table('files');
 
 		$query = $this->parseFilters($query, $filter);
+
+		$total = $query->count();
 
 		$query = $this->parsePaging($query, $offset, $limit);
 
@@ -198,14 +240,34 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
 
 		if( ! $files )
 		{
-			return [];	
+			$files = [];
 		}
 		
 		foreach ($files as &$file) {
 			$file->type = 'file';
+			$timezone = (Config::get('app.timezone'))?Config::get('app.timezone'):'UTC';
+			$file->created_at = Carbon::parse($file->created_at)->tz($timezone);
+			$file->updated_at = Carbon::parse($file->updated_at)->tz($timezone);
 		}
+
+		$result = new Collection($files);
 		
-		return $files;
+		$result->setParams($params);
+
+		$meta = [
+			'count' => count($files), 
+			'offset' => $offset, 
+			'limit' => $limit, 
+			'total' => $total, 
+			'filter' => $filter, 
+			'sort' => $sort, 
+			'include' => $include
+		];
+		$result->setMeta($meta);
+
+		$result->load($include);
+		
+		return $result;
 	}
 
 }
