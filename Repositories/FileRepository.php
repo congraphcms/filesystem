@@ -123,6 +123,7 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
 
 		$this->db->table('files')->where('id', '=', $id)->update($model);
 
+		Trunk::forgetType('file');
 		$file = $this->fetch($id);
 
 		// and return file
@@ -149,7 +150,7 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
 		
 		// delete the file
 		$this->db->table('files')->where('id', '=', $file->id)->delete();
-
+		Trunk::forgetType('file');
 		return $file;
 	}
 	
@@ -172,6 +173,7 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
 	protected function _fetch($id, $include = [])
 	{
 		$params = func_get_args();
+		$params['function'] = __METHOD__;
 		
 		if(Trunk::has($params, 'file'))
 		{
@@ -213,6 +215,7 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
 	protected function _get($filter = [], $offset = 0, $limit = 0, $sort = [], $include = [])
 	{
 		$params = func_get_args();
+		$params['function'] = __METHOD__;
 
 		if(Trunk::has($params, 'file'))
 		{

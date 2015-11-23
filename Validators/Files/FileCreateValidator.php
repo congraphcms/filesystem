@@ -135,7 +135,7 @@ class FileCreateValidator extends Validator
 	{
 		$file = $params['file'];
 
-		$uploadsUrl = Config::get('cookbook.uploads_path');
+		$uploadsUrl = Config::get('cb.files.uploads_path');
 
 		$url = FileHelper::normalizeUrl($uploadsUrl . '/' . $file->getFilename());
 

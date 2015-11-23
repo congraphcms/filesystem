@@ -33,7 +33,7 @@ class FilesystemServiceProvider extends ServiceProvider {
 	* @return void
 	*/
 	public function register() {
-		$this->mergeConfigFrom(realpath(__DIR__ . '/config/cookbook.php'), 'cookbook');
+		$this->mergeConfigFrom(realpath(__DIR__ . '/config/config.php'), 'cb.files');
 		$this->registerServiceProviders();
 	}
 
@@ -44,7 +44,8 @@ class FilesystemServiceProvider extends ServiceProvider {
 	 */
 	public function boot() {
 		$this->publishes([
-			__DIR__.'/config/cookbook.php' => config_path('cookbook.php'),
+			__DIR__.'/config/config.php' => config_path('cb.files.php'),
+			__DIR__.'/database/migrations' => database_path('/migrations'),
 		]);
 	}
 
