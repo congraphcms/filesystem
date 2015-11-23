@@ -37,10 +37,7 @@
     "autoload": {
         "psr-4": {
             "Cookbook\\Filesystem\\": ""
-        },
-        "classmap": [
-            "migrations"
-        ]
+        }
     },
 
     "minimum-stability": "dev"
