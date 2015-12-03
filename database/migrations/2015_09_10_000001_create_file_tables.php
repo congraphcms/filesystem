@@ -61,10 +61,11 @@ class CreateFileTables extends Migration {
 			$table->string('caption', 500)->default('');
 
 			// file description
-			$table->text('description')->default('');
+			$table->text('description');
 			
 			// created_at and updated_at timestamps
-			$table->timestamps();
+			$table->timestamp('created_at')->nullable();
+			$table->timestamp('updated_at')->nullable();
 		});
 
 
