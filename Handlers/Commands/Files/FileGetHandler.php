@@ -52,12 +52,14 @@ class FileGetHandler extends RepositoryCommandHandler
 	 */
 	public function handle(RepositoryCommand $command)
 	{
-		return $this->repository->get(
+		$files = $this->repository->get(
 			(!empty($command->params['filter']))?$command->params['filter']:[],
 			(!empty($command->params['offset']))?$command->params['offset']:0,
 			(!empty($command->params['limit']))?$command->params['limit']:0,
 			(!empty($command->params['sort']))?$command->params['sort']:[],
 			(!empty($command->params['include']))?$command->params['include']:[]
 		);
+
+		return $files;
 	}
 }

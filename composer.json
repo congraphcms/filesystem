@@ -14,7 +14,8 @@
         "php": ">=5.4.0",
         "illuminate/database": "5.*",
         "cookbook/core": "dev-master",
-        "cookbook/contracts": "dev-master"
+        "cookbook/contracts": "dev-master",
+        "intervention/image": "^2.3"
     },
 
     "repositories": [

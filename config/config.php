@@ -13,6 +13,10 @@ return array(
 	/**
 	 *	path to directory where uploaded files will be stored
 	 */
-	'uploads_path' => 'files'
+	'uploads_path' => 'files',
+
+	'image_versions' => [
+		'admin_thumb' => 'Cookbook\Filesystem\Handlers\Images\AdminThumbHandler'
+	]
 
 );

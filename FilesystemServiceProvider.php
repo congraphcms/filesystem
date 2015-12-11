@@ -56,10 +56,6 @@ class FilesystemServiceProvider extends ServiceProvider {
 	 */
 	protected function registerServiceProviders(){
 
-		// Core
-		// -----------------------------------------------------------------------------
-		$this->app->register('Cookbook\Core\CoreServiceProvider');
-
 		// Commands
 		// -----------------------------------------------------------------------------
 		$this->app->register('Cookbook\Filesystem\Commands\CommandsServiceProvider');

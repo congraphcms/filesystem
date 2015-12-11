@@ -7,6 +7,7 @@ use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamWrapper;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
 class FileTest extends Orchestra\Testbench\TestCase
 {
@@ -21,7 +22,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 		// path unless `--path` option is available.
 		$this->artisan('migrate', [
 			'--database' => 'testbench',
-			'--realpath' => realpath(__DIR__.'/../../databas/migrations'),
+			'--realpath' => realpath(__DIR__.'/../../database/migrations'),
 		]);
 
 		$this->artisan('db:seed', [
@@ -51,7 +52,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 		// fwrite(STDOUT, __METHOD__ . "\n");
 		// parent::tearDown();
 		
-		$this->artisan('migrate:reset');
+		// $this->artisan('migrate:reset');
 		// unset($this->app);
 		Storage::deleteDir('files');
 		Storage::deleteDir('uploads');
@@ -107,7 +108,11 @@ class FileTest extends Orchestra\Testbench\TestCase
 
 	protected function getPackageProviders($app)
 	{
-		return ['Cookbook\Filesystem\FilesystemServiceProvider'];
+		return [
+			'Intervention\Image\ImageServiceProvider', 
+			'Cookbook\Core\CoreServiceProvider', 
+			'Cookbook\Filesystem\FilesystemServiceProvider'
+		];
 	}
 
 	public function testCreateFile()
@@ -244,6 +249,32 @@ class FileTest extends Orchestra\Testbench\TestCase
 		$this->assertEquals(count($result), 1);
 		$this->d->dump($result->toArray());
 
+	}
+
+	public function testFileServe()
+	{
+		fwrite(STDOUT, __METHOD__ . "\n");
+
+		$app = $this->createApplication();
+		$bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
+		$content = $bus->dispatch( new Cookbook\Filesystem\Commands\Files\FileServeCommand('files/1.jpg', null));
+
+		$this->assertEquals(Storage::get('files/1.jpg'), $content);
+	}
+
+	public function testFileServeVersion()
+	{
+		fwrite(STDOUT, __METHOD__ . "\n");
+		
+		$app = $this->createApplication();
+		$bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
+		$content = $bus->dispatch( new Cookbook\Filesystem\Commands\Files\FileServeCommand('files/1.jpg', 'admin_thumb'));
+
+		$thumbUrl = realpath(__DIR__ . '/../storage/') . '/files/1.jpg';
+		$thumb = Image::make($thumbUrl);
+		$thumb->fit(200, 150);
+		$thumbContent = (string) $thumb->encode();
+		$this->assertEquals($thumbContent, $content);
 	}
 
 	// public function testGetParams()

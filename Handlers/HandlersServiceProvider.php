@@ -17,6 +17,8 @@ use Cookbook\Filesystem\Handlers\Commands\Files\FileUpdateHandler;
 use Cookbook\Filesystem\Handlers\Commands\Files\FileDeleteHandler;
 use Cookbook\Filesystem\Handlers\Commands\Files\FileFetchHandler;
 use Cookbook\Filesystem\Handlers\Commands\Files\FileGetHandler;
+use Cookbook\Filesystem\Handlers\Commands\Files\FileServeHandler;
+use Cookbook\Filesystem\Handlers\Images\AdminThumbHandler;
 
 /**
  * HandlersServiceProvider service provider for handlers
@@ -82,7 +84,9 @@ class HandlersServiceProvider extends ServiceProvider {
 			'Cookbook\Filesystem\Commands\Files\FileFetchCommand' => 
 				'Cookbook\Filesystem\Handlers\Commands\Files\FileFetchHandler@handle',
 			'Cookbook\Filesystem\Commands\Files\FileGetCommand' => 
-				'Cookbook\Filesystem\Handlers\Commands\Files\FileGetHandler@handle'
+				'Cookbook\Filesystem\Handlers\Commands\Files\FileGetHandler@handle',
+			'Cookbook\Filesystem\Commands\Files\FileServeCommand' => 
+				'Cookbook\Filesystem\Handlers\Commands\Files\FileServeHandler@handle'
 			
 		];
 
@@ -117,6 +121,14 @@ class HandlersServiceProvider extends ServiceProvider {
 		$this->app->bind('Cookbook\Filesystem\Handlers\Commands\Files\FileGetHandler', function($app){
 			return new FileGetHandler($app->make('Cookbook\Contracts\Filesystem\FileRepositoryContract'));
 		});
+
+		$this->app->bind('Cookbook\Filesystem\Handlers\Commands\Files\FileServeHandler', function($app){
+			return new FileServeHandler($app);
+		});
+
+		$this->app->bind('Cookbook\Filesystem\Handlers\Images\AdminThumbHandler', function($app){
+			return new AdminThumbHandler();
+		});
 	}
 
 
@@ -133,7 +145,8 @@ class HandlersServiceProvider extends ServiceProvider {
 			'Cookbook\Filesystem\Handlers\Commands\Files\FileUpdateHandler',
 			'Cookbook\Filesystem\Handlers\Commands\Files\FileDeleteHandler',
 			'Cookbook\Filesystem\Handlers\Commands\Files\FileFetchHandler',
-			'Cookbook\Filesystem\Handlers\Commands\Files\FileGetHandler'
+			'Cookbook\Filesystem\Handlers\Commands\Files\FileGetHandler',
+			'Cookbook\Filesystem\Handlers\Commands\Files\FileServeHandler'
 		];
 	}
 }

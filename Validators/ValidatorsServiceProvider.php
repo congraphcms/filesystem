@@ -17,6 +17,7 @@ use Cookbook\Filesystem\Validators\Files\FileUpdateValidator;
 use Cookbook\Filesystem\Validators\Files\FileDeleteValidator;
 use Cookbook\Filesystem\Validators\Files\FileFetchValidator;
 use Cookbook\Filesystem\Validators\Files\FileGetValidator;
+use Cookbook\Filesystem\Validators\Files\FileServeValidator;
 
 /**
  * ValidatorsServiceProvider service provider for validators
@@ -70,7 +71,9 @@ class ValidatorsServiceProvider extends ServiceProvider {
 			'Cookbook\Filesystem\Commands\Files\FileFetchCommand' => 
 				'Cookbook\Filesystem\Validators\Files\FileFetchValidator@validate',
 			'Cookbook\Filesystem\Commands\Files\FileGetCommand' => 
-				'Cookbook\Filesystem\Validators\Files\FileGetValidator@validate'
+				'Cookbook\Filesystem\Validators\Files\FileGetValidator@validate',
+			'Cookbook\Filesystem\Commands\Files\FileServeCommand' => 
+				'Cookbook\Filesystem\Validators\Files\FileServeValidator@validate'
 		];
 
 		$this->app->make('Illuminate\Contracts\Bus\Dispatcher')->mapValidators($mappings);
@@ -104,6 +107,10 @@ class ValidatorsServiceProvider extends ServiceProvider {
 			return new FileGetValidator();
 		});
 
+		$this->app->bind('Cookbook\Filesystem\Validators\Files\FileServeValidator', function($app){
+			return new FileServeValidator();
+		});
+
 	}
 
 
@@ -121,6 +128,7 @@ class ValidatorsServiceProvider extends ServiceProvider {
 			'Cookbook\Filesystem\Validators\Files\FileDeleteValidator',
 			'Cookbook\Filesystem\Validators\Files\FileFetchValidator',
 			'Cookbook\Filesystem\Validators\Files\FileGetValidator',
+			'Cookbook\Filesystem\Validators\Files\FileServeValidator',
 
 		];
 	}
