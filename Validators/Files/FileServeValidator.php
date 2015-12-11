@@ -60,6 +60,8 @@ class FileServeValidator
 			$e = new NotFoundException();
 			$e->setErrorKey('url');
 			$e->addErrors('File not found.');
+
+			throw $e;
 		}
 
 		$command->version = (is_null($command->version))?$command->version:strval($command->version);

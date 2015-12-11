@@ -15,8 +15,11 @@ return array(
 	 */
 	'uploads_path' => 'files',
 
+	
 	'image_versions' => [
 		'admin_thumb' => 'Cookbook\Filesystem\Handlers\Images\AdminThumbHandler'
-	]
+	],
+
+	'cache_lifetime' => 1440
 
 );

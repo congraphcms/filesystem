@@ -12,6 +12,7 @@ namespace Cookbook\Filesystem\Handlers\Commands\Files;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Cache;
 use Cookbook\Filesystem\Commands\Files\FileServeCommand;
 use Illuminate\Contracts\Container\Container;
 
@@ -64,17 +65,15 @@ class FileServeHandler
 
 		if($command->version)
 		{
+			$key = md5(serialize(['url' => $command->url, 'version' => $command->version]));
+			$lifetime = Config::get('cb.files.cache_lifetime');
 			$handler = $this->container->make(Config::get('cb.files.image_versions.' . $command->version));
-			$file = $handler->handle($file);
+			
+			$file = Cache::remember($key, $lifetime, function() use($handler, $file) {
+				return $handler->handle($file);
+			});
 		}
 
 		return $file;
-		// check if file is an image
-		// if it is, check if you should serve original or version
-		// check if version exist
-		// check if version is in cache
-		// create version
-		// put in cache
-		// serve image
 	}
 }
