@@ -137,7 +137,7 @@ class FileCreateValidator extends Validator
 
 		$uploadsUrl = Config::get('cb.files.uploads_path');
 
-		$url = FileHelper::normalizeUrl($uploadsUrl . '/' . $file->getFilename());
+		$url = FileHelper::normalizeUrl($uploadsUrl . '/' . $file->getClientOriginalName());
 
 		$url = FileHelper::uniqueFilename($url);
 		// set url
@@ -149,13 +149,15 @@ class FileCreateValidator extends Validator
 
 		// set extension
 		$params['extension'] = $file->getExtension();
+		if(empty($params['extension'])) {
+			$params['extension'] = $file->guessExtension();
+		}
 
 		// set mime type
 		$params['mime_type'] = $file->getMimeType();
 
 		// set size
 		$params['size'] = $file->getSize();
-
 
 	}
 }
