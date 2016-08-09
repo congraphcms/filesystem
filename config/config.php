@@ -17,7 +17,8 @@ return array(
 
 	
 	'image_versions' => [
-		'admin_thumb' => 'Cookbook\Filesystem\Handlers\Images\AdminThumbHandler'
+		'admin_thumb' => 'Cookbook\Filesystem\Handlers\Images\AdminThumbHandler',
+		'admin_image' => 'Cookbook\Filesystem\Handlers\Images\AdminImageHandler'
 	],
 
 	'cache_lifetime' => 1440

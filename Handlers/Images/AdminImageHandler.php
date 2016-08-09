@@ -25,11 +25,11 @@ use Intervention\Image\ImageManagerStatic as Image;
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
-class AdminThumbHandler implements ImageVersionHandlerContract
+class AdminImageHandler implements ImageVersionHandlerContract
 {
 
 	/**
-	 * Create admin thumb version
+	 * Create admin image version
 	 * 
 	 * @param $imageData
 	 * 
@@ -38,7 +38,7 @@ class AdminThumbHandler implements ImageVersionHandlerContract
 	public function handle($imageData)
 	{
 		$image = Image::make($imageData);
-		$image->fit(50, 50);
+		$image->fit(300, 200);
 		return (string) $image->encode();
 	}
 }
