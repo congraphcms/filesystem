@@ -53,7 +53,7 @@ class FileCreateValidator extends Validator
 			'url'					=> 'required|unique:files,url',
 			'name'					=> 'required|min:3|max:500',
 			'extension'				=> 'required|min:1|max:50',
-			'mime_type'				=> 'required|min:1|max:50',
+			'mime_type'				=> 'required|min:1|max:250',
 			'size'					=> 'required|integer',
 			'caption'				=> '',
 			'description'			=> '',
