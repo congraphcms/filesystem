@@ -90,7 +90,7 @@ class FileCreateValidator extends Validator
 
 
 
-		$this->validateParams($command->params, $this->rules, true);
+		$this->validateParams($command, $this->rules, true);
 
 		if( $this->exception->hasErrors() )
 		{

@@ -13,7 +13,7 @@
     "require": {
         "php": ">=5.4.0",
         "illuminate/database": "5.*",
-        "cookbook/core": "dev-auth",
+        "cookbook/core": "dev-master",
         "cookbook/contracts": "dev-master",
         "intervention/image": "^2.3"
     },
@@ -31,8 +31,7 @@
 
     "require-dev": {
         "phpunit/phpunit": "4.5.*",
-        "orchestra/testbench": "3.1.*",
-        "mikey179/vfsStream": "^1.5@dev"
+        "orchestra/testbench": "3.1.*"
     },
 
     "autoload": {
