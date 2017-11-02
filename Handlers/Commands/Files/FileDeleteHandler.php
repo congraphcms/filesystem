@@ -54,7 +54,11 @@ class FileDeleteHandler extends RepositoryCommandHandler
 	{
 		$file = $this->repository->delete($command->id);
 
-		Storage::delete($file->url);
+		try
+		{
+			Storage::delete($file->url);
+		}
+		catch(\League\Flysystem\FileNotFoundException $e){}
 
 		return $file->id;
 	}
