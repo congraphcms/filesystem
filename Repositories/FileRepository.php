@@ -114,7 +114,7 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
         // find file with that ID
         $file = $this->fetch($id);
 
-        if (! $file) {
+        if (!$file) {
             throw new NotFoundException(['There is no file with that ID.']);
         }
 
@@ -151,6 +151,24 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
         Trunk::forgetType('file');
         return $file;
     }
+
+    /**
+     * Delete files from database by their urls
+     *
+     * @param array|string $urls - url|urls of files to be deleted
+     *
+     * @return void
+     */
+    public function deleteByUrl($urls)
+    {
+        if (!is_array($urls)) {
+            $urls = [$urls];
+        }
+        
+        // delete the file
+        $this->db->table($this->table)->whereIn('url', $urls)->delete();
+        Trunk::forgetType('file');
+    }
     
 
 
@@ -172,7 +190,7 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
     {
         $params = func_get_args();
         $params['function'] = __METHOD__;
-        
+
         if (Trunk::has($params, 'file')) {
             $file = Trunk::get($id, 'file');
             $file->clearIncluded();
@@ -183,19 +201,19 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
         }
 
         $file = $this->db->table($this->table)->find($id);
-        
-        if (! $file) {
+
+        if (!$file) {
             throw new NotFoundException(['There is no file with that ID.']);
         }
 
         $file->type = 'file';
 
-        $timezone = (Config::get('app.timezone'))?Config::get('app.timezone'):'UTC';
+        $timezone = (Config::get('app.timezone')) ? Config::get('app.timezone') : 'UTC';
         $file->date_created = Carbon::parse($file->date_created)->tz($timezone);
         $file->date_modified = Carbon::parse($file->date_modified)->tz($timezone);
 
         $result = new Model($file);
-        
+
         $result->setParams($params);
         $meta = ['id' => $id, 'include' => $include];
         $result->setMeta($meta);
@@ -233,22 +251,22 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
         $query = $this->parsePaging($query, $offset, $limit);
 
         $query = $this->parseSorting($query, $sort);
-        
+
         $files = $query->get();
 
-        if (! $files) {
+        if (!$files) {
             $files = [];
         }
-        
+
         foreach ($files as &$file) {
             $file->type = 'file';
-            $timezone = (Config::get('app.timezone'))?Config::get('app.timezone'):'UTC';
+            $timezone = (Config::get('app.timezone')) ? Config::get('app.timezone') : 'UTC';
             $file->date_created = Carbon::parse($file->date_created)->tz($timezone);
             $file->date_modified = Carbon::parse($file->date_modified)->tz($timezone);
         }
 
         $result = new Collection($files);
-        
+
         $result->setParams($params);
 
         $meta = [
@@ -263,7 +281,7 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
         $result->setMeta($meta);
 
         $result->load($include);
-        
+
         return $result;
     }
 }
