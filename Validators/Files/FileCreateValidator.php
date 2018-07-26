@@ -16,13 +16,12 @@ use Cookbook\Core\Helpers\FileHelper;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Illuminate\Support\Facades\Config;
 
-
 /**
  * FileCreateValidator class
- * 
+ *
  * Validating command for creating file
- * 
- * 
+ *
+ *
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @package 	cookbook/filesystem
@@ -33,131 +32,122 @@ class FileCreateValidator extends Validator
 {
 
 
-	/**
-	 * Set of rules for validating file
-	 *
-	 * @var array
-	 */
-	protected $rules;
+    /**
+     * Set of rules for validating file
+     *
+     * @var array
+     */
+    protected $rules;
 
-	/**
-	 * Create new FileCreateValidator
-	 * 
-	 * @return void
-	 */
-	public function __construct()
-	{
+    /**
+     * Create new FileCreateValidator
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->rules = [
+            'url'					=> 'required|unique:wp_bicc_images,url',
+            'filename'				=> 'required|min:3|max:500',
+            'extension'				=> 'required|min:1|max:50',
+            'type'					=> 'required|min:1|max:250',
+            'size'					=> 'required|integer',
+            'caption'				=> '',
+            'description'			=> '',
+            'file'					=> ''
+        ];
 
+        parent::__construct();
 
-		$this->rules = [
-			'url'					=> 'required|unique:files,url',
-			'name'					=> 'required|min:3|max:500',
-			'extension'				=> 'required|min:1|max:50',
-			'mime_type'				=> 'required|min:1|max:250',
-			'size'					=> 'required|integer',
-			'caption'				=> '',
-			'description'			=> '',
-			'file'					=> ''
-		];
-
-		parent::__construct();
-
-		$this->exception->setErrorKey('files');
-	}
+        $this->exception->setErrorKey('files');
+    }
 
 
-	/**
-	 * Validate RepositoryCommand
-	 * 
-	 * @param Cookbook\Core\Bus\RepositoryCommand $command
-	 * 
-	 * @todo  Create custom validation for all db related checks (DO THIS FOR ALL VALIDATORS)
-	 * @todo  Check all db rules | make validators on repositories
-	 * 
-	 * @return void
-	 */
-	public function validate(RepositoryCommand $command)
-	{
+    /**
+     * Validate RepositoryCommand
+     *
+     * @param Cookbook\Core\Bus\RepositoryCommand $command
+     *
+     * @todo  Create custom validation for all db related checks (DO THIS FOR ALL VALIDATORS)
+     * @todo  Check all db rules | make validators on repositories
+     *
+     * @return void
+     */
+    public function validate(RepositoryCommand $command)
+    {
+        $this->validateFile($command->params);
 
-		$this->validateFile($command->params);
+        if ($this->exception->hasErrors()) {
+            throw $this->exception;
+        }
 
-		if( $this->exception->hasErrors() )
-		{
-			throw $this->exception;
-		}
-
-		$this->setFileInfoParams($command->params);
+        $this->setFileInfoParams($command->params);
 
 
 
-		$this->validateParams($command->params, $this->rules, true);
+        $this->validateParams($command->params, $this->rules, true);
 
-		if( $this->exception->hasErrors() )
-		{
-			throw $this->exception;
-		}
-	}
+        if ($this->exception->hasErrors()) {
+            throw $this->exception;
+        }
+    }
 
 
-	/**
-	 * Validate File
-	 * 
-	 * @param array $params
-	 * 
-	 * @return void
-	 */
-	public function validateFile(array $params)
-	{
-		if( empty($params['file']) || ! $params['file'] instanceof UploadedFile )
-		{
-			$this->exception->addErrors(['You need to upload a file.']);
+    /**
+     * Validate File
+     *
+     * @param array $params
+     *
+     * @return void
+     */
+    public function validateFile(array $params)
+    {
+        if (empty($params['file']) || ! $params['file'] instanceof UploadedFile) {
+            $this->exception->addErrors(['You need to upload a file.']);
 
-			return;
-		}
+            return;
+        }
 
-		$file = $params['file'];
+        $file = $params['file'];
 
-		if( ! $file->isValid() )
-		{
-			$this->exception->addErrors(['There was an error during upload of the file.']);
-		}
+        if (! $file->isValid()) {
+            $this->exception->addErrors(['There was an error during upload of the file.']);
+        }
+    }
 
-	}
+    /**
+     * Get file info and add data to command params
+     *
+     * @param array &$params
+     *
+     * @return void
+     */
+    public function setFileInfoParams(array &$params)
+    {
+        $file = $params['file'];
 
-	/**
-	 * Get file info and add data to command params
-	 * 
-	 * @param array &$params
-	 * 
-	 * @return void
-	 */
-	public function setFileInfoParams(array &$params)
-	{
-		$file = $params['file'];
+        $uploadsUrl = Config::get('cb.files.uploads_path');
 
-		$uploadsUrl = Config::get('cb.files.uploads_path');
+        $url = FileHelper::normalizeUrl($uploadsUrl . '/' . $file->getClientOriginalName());
 
-		$url = FileHelper::normalizeUrl($uploadsUrl . '/' . $file->getClientOriginalName());
+        $url = FileHelper::uniqueFilename($url);
+        // set url
+        $params['url'] = $url;
 
-		$url = FileHelper::uniqueFilename($url);
-		// set url
-		$params['url'] = $url;
+        // set name
+        $name = FileHelper::getFileName($url);
+        $params['filename'] = $name;
 
-		// set name
-		$name = FileHelper::getFileName($url);
-		$params['name'] = $name;
+        // set extension
+        $params['extension'] = $file->getExtension();
+        if (empty($params['extension'])) {
+            $params['extension'] = $file->guessExtension();
+        }
 
-		// set extension
-		$params['extension'] = $file->getExtension();
-		if(empty($params['extension'])) {
-			$params['extension'] = $file->guessExtension();
-		}
+        // set mime type
+        $params['type'] = $file->getMimeType();
 
-		// set mime type
-		$params['mime_type'] = $file->getMimeType();
-
-		// set size
-		$params['size'] = $file->getSize();
-
-	}
+        // set size
+        $params['size'] = $file->getSize();
+    }
 }

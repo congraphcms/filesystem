@@ -24,253 +24,246 @@ use Carbon\Carbon;
 
 /**
  * FileRepository class
- * 
+ *
  * Repository for file database queries
- * 
+ *
  * @uses   		Illuminate\Database\Connection
  * @uses   		Cookbook\Core\Repository\AbstractRepository
- * 
+ *
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @package 	cookbook/filesystem
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
-class FileRepository extends AbstractRepository implements FileRepositoryContract//, UsesCache
+class FileRepository extends AbstractRepository implements FileRepositoryContract //, UsesCache
 {
 
 // ----------------------------------------------------------------------------------------------
-// PARAMS
-// ----------------------------------------------------------------------------------------------
-// 
-// 
-// 
+    // PARAMS
+    // ----------------------------------------------------------------------------------------------
+//
+//
+//
 
-	/**
-	 * Create new FileRepository
-	 * 
-	 * @param Illuminate\Database\Connection $db
-	 * 
-	 * @return void
-	 */
-	public function __construct(Connection $db)
-	{
-		$this->type = 'files';
+    /**
+     * Create new FileRepository
+     *
+     * @param Illuminate\Database\Connection $db
+     *
+     * @return void
+     */
+    public function __construct(Connection $db)
+    {
+        $this->type = 'files';
 
-		// AbstractRepository constructor
-		parent::__construct($db);
-	}
+        $this->table = 'wp_bicc_images';
 
-// ----------------------------------------------------------------------------------------------
-// CRUD
-// ----------------------------------------------------------------------------------------------
-// 
-// 
-// 
+        // AbstractRepository constructor
+        parent::__construct($db);
+    }
 
-
-	/**
-	 * Create new file
-	 * 
-	 * @param array $model - file params (url, name, size...)
-	 * 
-	 * @return mixed
-	 * 
-	 * @throws Exception
-	 */
-	protected function _create($model)
-	{
-		unset($model['file']);
-		$model['created_at'] = $model['updated_at'] = Carbon::now('UTC')->toDateTimeString();
-
-		// insert file in database
-		$fileId = $this->db->table('files')->insertGetId($model);
-
-		// get file
-		$file = $this->fetch($fileId);
-
-		if(!$file)
-		{
-			throw new \Exception('Failed to insert file');
-		}
-
-		// and return newly created file
-		return $file;
-		
-	}
-
-	/**
-	 * Update file
-	 * 
-	 * @param array $model - file params (url, name, size...)
-	 *
-	 * @return mixed
-	 * 
-	 * @throws Cookbook\Core\Exceptions\NotFoundException
-	 */
-	protected function _update($id, $model)
-	{
-
-		// find file with that ID
-		$file = $this->fetch($id);
-
-		if( ! $file )
-		{
-			throw new NotFoundException(['There is no file with that ID.']);
-		}
-
-		$model['updated_at'] = Carbon::now('UTC')->toDateTimeString();
-
-		$this->db->table('files')->where('id', '=', $id)->update($model);
-
-		Trunk::forgetType('file');
-		$file = $this->fetch($id);
-
-		// and return file
-		return $file;
-	}
-
-	/**
-	 * Delete file from database
-	 * 
-	 * @param integer $id - ID of file that will be deleted
-	 * 
-	 * @return boolean
-	 * 
-	 * @throws Cookbook\Core\Exceptions\NotFoundException
-	 */
-	protected function _delete($id)
-	{
-		// get the file
-		$file = $this->fetch($id);
-		if(!$file)
-		{
-			throw new NotFoundException(['There is no file with that ID.']);
-		}
-		
-		// delete the file
-		$this->db->table('files')->where('id', '=', $file->id)->delete();
-		Trunk::forgetType('file');
-		return $file;
-	}
-	
+    // ----------------------------------------------------------------------------------------------
+    // CRUD
+    // ----------------------------------------------------------------------------------------------
+//
+//
+//
 
 
-// ----------------------------------------------------------------------------------------------
-// GETTERS
-// ----------------------------------------------------------------------------------------------
-// 
-// 
-// 
+    /**
+     * Create new file
+     *
+     * @param array $model - file params (url, name, size...)
+     *
+     * @return mixed
+     *
+     * @throws Exception
+     */
+    protected function _create($model)
+    {
+        unset($model['file']);
+        $model['date_created'] = $model['date_modified'] = Carbon::now('UTC')->toDateTimeString();
 
-	/**
-	 * Get file by ID
-	 * 
-	 * @param int $id - ID of file to be fetched
-	 * 
-	 * @return array
-	 */
-	protected function _fetch($id, $include = [])
-	{
-		$params = func_get_args();
-		$params['function'] = __METHOD__;
-		
-		if(Trunk::has($params, 'file'))
-		{
-			$file = Trunk::get($id, 'file');
-			$file->clearIncluded();
-			$file->load($include);
-			$meta = ['id' => $id, 'include' => $include];
-			$file->setMeta($meta);
-			return $file;
-		}
+        // insert file in database
+        $fileId = $this->db->table($this->table)->insertGetId($model);
 
-		$file = $this->db->table('files')->find($id);
-		
-		if( ! $file )
-		{
-			throw new NotFoundException(['There is no file with that ID.']);
-		}
+        // get file
+        $file = $this->fetch($fileId);
 
-		$file->type = 'file';
+        if (!$file) {
+            throw new \Exception('Failed to insert file');
+        }
 
-		$timezone = (Config::get('app.timezone'))?Config::get('app.timezone'):'UTC';
-		$file->created_at = Carbon::parse($file->created_at)->tz($timezone);
-		$file->updated_at = Carbon::parse($file->updated_at)->tz($timezone);
+        // and return newly created file
+        return $file;
+    }
 
-		$result = new Model($file);
-		
-		$result->setParams($params);
-		$meta = ['id' => $id, 'include' => $include];
-		$result->setMeta($meta);
-		$result->load($include);
-		return $result;
-	}
+    /**
+     * Update file
+     *
+     * @param array $model - file params (url, name, size...)
+     *
+     * @return mixed
+     *
+     * @throws Cookbook\Core\Exceptions\NotFoundException
+     */
+    protected function _update($id, $model)
+    {
 
-	/**
-	 * Get files
-	 * 
-	 * @return array
-	 */
-	protected function _get($filter = [], $offset = 0, $limit = 0, $sort = [], $include = [])
-	{
-		$params = func_get_args();
-		$params['function'] = __METHOD__;
+        // find file with that ID
+        $file = $this->fetch($id);
 
-		if(Trunk::has($params, 'file'))
-		{
-			$files = Trunk::get($params, 'file');
-			$files->clearIncluded();
-			$files->load($include);
-			$meta = [
-				'include' => $include
-			];
-			$files->setMeta($meta);
-			return $files;
-		}
+        if (! $file) {
+            throw new NotFoundException(['There is no file with that ID.']);
+        }
 
-		$query = $this->db->table('files');
+        $model['date_modified'] = Carbon::now('UTC')->toDateTimeString();
 
-		$query = $this->parseFilters($query, $filter);
+        $this->db->table($this->table)->where('id', '=', $id)->update($model);
 
-		$total = $query->count();
+        Trunk::forgetType('file');
+        $file = $this->fetch($id);
 
-		$query = $this->parsePaging($query, $offset, $limit);
+        // and return file
+        return $file;
+    }
 
-		$query = $this->parseSorting($query, $sort);
-		
-		$files = $query->get();
+    /**
+     * Delete file from database
+     *
+     * @param integer $id - ID of file that will be deleted
+     *
+     * @return boolean
+     *
+     * @throws Cookbook\Core\Exceptions\NotFoundException
+     */
+    protected function _delete($id)
+    {
+        // get the file
+        $file = $this->fetch($id);
+        if (!$file) {
+            throw new NotFoundException(['There is no file with that ID.']);
+        }
+        
+        // delete the file
+        $this->db->table($this->table)->where('id', '=', $file->id)->delete();
+        Trunk::forgetType('file');
+        return $file;
+    }
+    
 
-		if( ! $files )
-		{
-			$files = [];
-		}
-		
-		foreach ($files as &$file) {
-			$file->type = 'file';
-			$timezone = (Config::get('app.timezone'))?Config::get('app.timezone'):'UTC';
-			$file->created_at = Carbon::parse($file->created_at)->tz($timezone);
-			$file->updated_at = Carbon::parse($file->updated_at)->tz($timezone);
-		}
 
-		$result = new Collection($files);
-		
-		$result->setParams($params);
+    // ----------------------------------------------------------------------------------------------
+    // GETTERS
+    // ----------------------------------------------------------------------------------------------
+//
+//
+//
 
-		$meta = [
-			'count' => count($files), 
-			'offset' => $offset, 
-			'limit' => $limit, 
-			'total' => $total, 
-			'filter' => $filter, 
-			'sort' => $sort, 
-			'include' => $include
-		];
-		$result->setMeta($meta);
+    /**
+     * Get file by ID
+     *
+     * @param int $id - ID of file to be fetched
+     *
+     * @return array
+     */
+    protected function _fetch($id, $include = [])
+    {
+        $params = func_get_args();
+        $params['function'] = __METHOD__;
+        
+        if (Trunk::has($params, 'file')) {
+            $file = Trunk::get($id, 'file');
+            $file->clearIncluded();
+            $file->load($include);
+            $meta = ['id' => $id, 'include' => $include];
+            $file->setMeta($meta);
+            return $file;
+        }
 
-		$result->load($include);
-		
-		return $result;
-	}
+        $file = $this->db->table($this->table)->find($id);
+        
+        if (! $file) {
+            throw new NotFoundException(['There is no file with that ID.']);
+        }
 
+        $file->type = 'file';
+
+        $timezone = (Config::get('app.timezone'))?Config::get('app.timezone'):'UTC';
+        $file->date_created = Carbon::parse($file->date_created)->tz($timezone);
+        $file->date_modified = Carbon::parse($file->date_modified)->tz($timezone);
+
+        $result = new Model($file);
+        
+        $result->setParams($params);
+        $meta = ['id' => $id, 'include' => $include];
+        $result->setMeta($meta);
+        $result->load($include);
+        return $result;
+    }
+
+    /**
+     * Get files
+     *
+     * @return array
+     */
+    protected function _get($filter = [], $offset = 0, $limit = 0, $sort = [], $include = [])
+    {
+        $params = func_get_args();
+        $params['function'] = __METHOD__;
+
+        if (Trunk::has($params, 'file')) {
+            $files = Trunk::get($params, 'file');
+            $files->clearIncluded();
+            $files->load($include);
+            $meta = [
+                'include' => $include
+            ];
+            $files->setMeta($meta);
+            return $files;
+        }
+
+        $query = $this->db->table($this->table);
+
+        $query = $this->parseFilters($query, $filter);
+
+        $total = $query->count();
+
+        $query = $this->parsePaging($query, $offset, $limit);
+
+        $query = $this->parseSorting($query, $sort);
+        
+        $files = $query->get();
+
+        if (! $files) {
+            $files = [];
+        }
+        
+        foreach ($files as &$file) {
+            $file->type = 'file';
+            $timezone = (Config::get('app.timezone'))?Config::get('app.timezone'):'UTC';
+            $file->date_created = Carbon::parse($file->date_created)->tz($timezone);
+            $file->date_modified = Carbon::parse($file->date_modified)->tz($timezone);
+        }
+
+        $result = new Collection($files);
+        
+        $result->setParams($params);
+
+        $meta = [
+            'count' => count($files),
+            'offset' => $offset,
+            'limit' => $limit,
+            'total' => $total,
+            'filter' => $filter,
+            'sort' => $sort,
+            'include' => $include
+        ];
+        $result->setMeta($meta);
+
+        $result->load($include);
+        
+        return $result;
+    }
 }
