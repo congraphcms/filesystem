@@ -10,7 +10,6 @@
 
 namespace Cookbook\Filesystem\Handlers\Commands\Files;
 
-
 use Cookbook\Contracts\Filesystem\FileRepositoryContract;
 use Cookbook\Core\Bus\RepositoryCommandHandler;
 use Cookbook\Core\Bus\RepositoryCommand;
@@ -18,10 +17,10 @@ use Illuminate\Support\Facades\Storage;
 
 /**
  * FileCreateHandler class
- * 
+ *
  * Handling command for creating file
- * 
- * 
+ *
+ *
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @package 	cookbook/filesystem
@@ -31,31 +30,31 @@ use Illuminate\Support\Facades\Storage;
 class FileCreateHandler extends RepositoryCommandHandler
 {
 
-	/**
-	 * Create new FileCreateHandler
-	 * 
-	 * @param Cookbook\Contracts\Filesystem\FileRepositoryContract $repository
-	 * 
-	 * @return void
-	 */
-	public function __construct(FileRepositoryContract $repository)
-	{
-		parent::__construct($repository);
-	}
+    /**
+     * Create new FileCreateHandler
+     *
+     * @param Cookbook\Contracts\Filesystem\FileRepositoryContract $repository
+     *
+     * @return void
+     */
+    public function __construct(FileRepositoryContract $repository)
+    {
+        parent::__construct($repository);
+    }
 
-	/**
-	 * Handle RepositoryCommand
-	 * 
-	 * @param Cookbook\Core\Bus\RepositoryCommand $command
-	 * 
-	 * @return void
-	 */
-	public function handle(RepositoryCommand $command)
-	{
-		$file = $this->repository->create($command->params);
+    /**
+     * Handle RepositoryCommand
+     *
+     * @param Cookbook\Core\Bus\RepositoryCommand $command
+     *
+     * @return void
+     */
+    public function handle(RepositoryCommand $command)
+    {
+        $file = $this->repository->create($command->params);
 
-		Storage::put($file->url, file_get_contents($command->params['file']->getRealPath()));
+        Storage::put($file->url, file_get_contents($command->params['file']->getRealPath()));
 
-		return $file;
-	}
+        return $file;
+    }
 }

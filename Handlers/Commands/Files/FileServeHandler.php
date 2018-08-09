@@ -32,11 +32,11 @@ class FileServeHandler
 {
 
 	/**
-     * Application container
-     *
-     * @var \Illuminate\Contracts\Container\Container
-     */
-    protected $container;
+	 * Application container
+	 *
+	 * @var \Illuminate\Contracts\Container\Container
+	 */
+	protected $container;
 
 
 	/**
@@ -63,13 +63,12 @@ class FileServeHandler
 		// find file and serve its content
 		$file = Storage::get($command->url);
 
-		if($command->version)
-		{
+		if ($command->version) {
 			$key = md5(serialize(['url' => $command->url, 'version' => $command->version]));
 			$lifetime = Config::get('cb.files.cache_lifetime');
 			$handler = $this->container->make(Config::get('cb.files.image_versions.' . $command->version));
-			
-			$file = Cache::remember($key, $lifetime, function() use($handler, $file) {
+
+			$file = Cache::remember($key, $lifetime, function () use ($handler, $file) {
 				return $handler->handle($file);
 			});
 		}

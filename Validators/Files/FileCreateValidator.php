@@ -15,6 +15,7 @@ use Cookbook\Core\Validation\Validator;
 use Cookbook\Core\Helpers\FileHelper;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Illuminate\Support\Facades\Config;
+use WRPM\LaravelWPAuth\Facades\WPAuthUser;
 
 /**
  * FileCreateValidator class
@@ -40,23 +41,52 @@ class FileCreateValidator extends Validator
     protected $rules;
 
     /**
+     * Set of allowed extensions for uploaded files
+     *
+     * @var array
+     */
+    protected $allowedExtensions;
+
+    /**
+     * Set of allowed file origins
+     *
+     * @var array
+     */
+    protected $allowedOrigins;
+
+    /**
+     * Set of extensions that are considered images
+     *
+     * @var array
+     */
+    protected $imageExtensions;
+
+    /**
      * Create new FileCreateValidator
      *
      * @return void
      */
     public function __construct()
     {
+        $this->allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'tiff', 'svg'];
+        $this->allowedOrigins = ['user', 'library'];
+
+
         $this->rules = [
             'url'					=> 'required|unique:wp_bicc_images,url',
             'filename'				=> 'required|min:3|max:500',
-            'extension'				=> 'required|min:1|max:50',
+            'extension'				=> 'required|in:' . implode(',', $this->allowedExtensions),
             'type'					=> 'required|min:1|max:250',
             'size'					=> 'required|integer',
-            'caption'				=> '',
-            'description'			=> '',
-            'file'					=> ''
+            'origin'                => 'sometimes|in:' . implode(',', $this->allowedOrigins),
+            // 'caption'				=> '',
+            // 'description'			=> '',
+            'file'					=> 'required'
         ];
 
+
+        $this->imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'tiff'];
+        
         parent::__construct();
 
         $this->exception->setErrorKey('files');
@@ -81,11 +111,21 @@ class FileCreateValidator extends Validator
             throw $this->exception;
         }
 
+        
         $this->setFileInfoParams($command->params);
+        
+        
+        if (!isset($command->params['origin']) || empty($command->params['origin'])) {
+            $command->params['origin'] = 'user';
+        }
 
-
+        if ($command->params['origin'] != 'user' && !WPAuthUser::is('administrator')) {
+            throw new UnauthorizedHttpException('WWW-Authenticate', 'You are not authorized to upload this type of image.');
+        }
 
         $this->validateParams($command->params, $this->rules, true);
+
+        $command->params['user_id'] = WPAuthUser::getUserId();
 
         if ($this->exception->hasErrors()) {
             throw $this->exception;
@@ -145,8 +185,13 @@ class FileCreateValidator extends Validator
         }
 
         // set mime type
-        $params['type'] = $file->getMimeType();
+        $params['mime_type'] = $file->getMimeType();
+        $type = 'shape';
+        if (in_array($params['extension'], $this->imageExtensions)) {
+            $type = 'image';
+        }
 
+        $params['type'] = $type;
         // set size
         $params['size'] = $file->getSize();
     }

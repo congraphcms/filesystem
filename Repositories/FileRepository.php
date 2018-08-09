@@ -205,8 +205,19 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
         if (!$file) {
             throw new NotFoundException(['There is no file with that ID.']);
         }
-
+        $file->filetype = $file->type;
         $file->type = 'file';
+        $file->api_url = route('BIC.file.serve', ['file' => trim($file->url, '/')]);
+
+        if ($file->filetype == 'image') {
+            $versions = Config::get('cb.files.image_versions');
+            if (count($versions) > 0) {
+                $file->versions = [];
+            }
+            foreach ($versions as $version => $handler) {
+                $file->versions[$version] = $file->api_url . '?v=' . $version;
+            }
+        }
 
         $timezone = (Config::get('app.timezone')) ? Config::get('app.timezone') : 'UTC';
         $file->date_created = Carbon::parse($file->date_created)->tz($timezone);
