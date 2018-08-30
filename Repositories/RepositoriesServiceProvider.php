@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/filesystem package.
+ * This file is part of the congraph/filesystem package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Filesystem\Repositories;
+namespace Congraph\Filesystem\Repositories;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -21,7 +21,7 @@ use Illuminate\Support\ServiceProvider;
  * 
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/filesystem
+ * @package 	congraph/filesystem
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
@@ -58,14 +58,14 @@ class RepositoriesServiceProvider extends ServiceProvider {
 	 * @return void
 	 */
 	public function registerRepositories() {
-		$this->app->singleton('Cookbook\Filesystem\Repositories\FileRepository', function($app) {
+		$this->app->singleton('Congraph\Filesystem\Repositories\FileRepository', function($app) {
 			return new FileRepository(
 				$app['db']->connection()
 			);
 		});
 
 		$this->app->alias(
-			'Cookbook\Filesystem\Repositories\FileRepository', 'Cookbook\Contracts\Filesystem\FileRepositoryContract'
+			'Congraph\Filesystem\Repositories\FileRepository', 'Congraph\Contracts\Filesystem\FileRepositoryContract'
 		);
 	}
 
@@ -76,10 +76,10 @@ class RepositoriesServiceProvider extends ServiceProvider {
 	 */
 	public function mapObjectResolvers() {
 		$mappings = [
-			'file' => 'Cookbook\Filesystem\Repositories\FileRepository',
+			'file' => 'Congraph\Filesystem\Repositories\FileRepository',
 		];
 
-		$this->app->make('Cookbook\Contracts\Core\ObjectResolverContract')->maps($mappings);
+		$this->app->make('Congraph\Contracts\Core\ObjectResolverContract')->maps($mappings);
 	}
 
 	/**
@@ -90,8 +90,8 @@ class RepositoriesServiceProvider extends ServiceProvider {
 	public function provides()
 	{
 		return [
-			'Cookbook\Filesystem\Repositories\FileRepository',
-			'Cookbook\Contracts\Filesystem\FileRepositoryContract'
+			'Congraph\Filesystem\Repositories\FileRepository',
+			'Congraph\Contracts\Filesystem\FileRepositoryContract'
 		];
 	}
 

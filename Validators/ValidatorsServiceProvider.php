@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/filesystem package.
+ * This file is part of the congraph/filesystem package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,16 +8,16 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Filesystem\Validators;
+namespace Congraph\Filesystem\Validators;
 
 use Illuminate\Support\ServiceProvider;
 
-use Cookbook\Filesystem\Validators\Files\FileCreateValidator;
-use Cookbook\Filesystem\Validators\Files\FileUpdateValidator;
-use Cookbook\Filesystem\Validators\Files\FileDeleteValidator;
-use Cookbook\Filesystem\Validators\Files\FileFetchValidator;
-use Cookbook\Filesystem\Validators\Files\FileGetValidator;
-use Cookbook\Filesystem\Validators\Files\FileServeValidator;
+use Congraph\Filesystem\Validators\Files\FileCreateValidator;
+use Congraph\Filesystem\Validators\Files\FileUpdateValidator;
+use Congraph\Filesystem\Validators\Files\FileDeleteValidator;
+use Congraph\Filesystem\Validators\Files\FileFetchValidator;
+use Congraph\Filesystem\Validators\Files\FileGetValidator;
+use Congraph\Filesystem\Validators\Files\FileServeValidator;
 
 /**
  * ValidatorsServiceProvider service provider for validators
@@ -28,7 +28,7 @@ use Cookbook\Filesystem\Validators\Files\FileServeValidator;
  * 
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/filesystem
+ * @package 	congraph/filesystem
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
@@ -62,18 +62,18 @@ class ValidatorsServiceProvider extends ServiceProvider {
 		
 		$mappings = [
 			// Files
-			'Cookbook\Filesystem\Commands\Files\FileCreateCommand' => 
-				'Cookbook\Filesystem\Validators\Files\FileCreateValidator@validate',
-			'Cookbook\Filesystem\Commands\Files\FileUpdateCommand' => 
-				'Cookbook\Filesystem\Validators\Files\FileUpdateValidator@validate',
-			'Cookbook\Filesystem\Commands\Files\FileDeleteCommand' => 
-				'Cookbook\Filesystem\Validators\Files\FileDeleteValidator@validate',
-			'Cookbook\Filesystem\Commands\Files\FileFetchCommand' => 
-				'Cookbook\Filesystem\Validators\Files\FileFetchValidator@validate',
-			'Cookbook\Filesystem\Commands\Files\FileGetCommand' => 
-				'Cookbook\Filesystem\Validators\Files\FileGetValidator@validate',
-			'Cookbook\Filesystem\Commands\Files\FileServeCommand' => 
-				'Cookbook\Filesystem\Validators\Files\FileServeValidator@validate'
+			'Congraph\Filesystem\Commands\Files\FileCreateCommand' => 
+				'Congraph\Filesystem\Validators\Files\FileCreateValidator@validate',
+			'Congraph\Filesystem\Commands\Files\FileUpdateCommand' => 
+				'Congraph\Filesystem\Validators\Files\FileUpdateValidator@validate',
+			'Congraph\Filesystem\Commands\Files\FileDeleteCommand' => 
+				'Congraph\Filesystem\Validators\Files\FileDeleteValidator@validate',
+			'Congraph\Filesystem\Commands\Files\FileFetchCommand' => 
+				'Congraph\Filesystem\Validators\Files\FileFetchValidator@validate',
+			'Congraph\Filesystem\Commands\Files\FileGetCommand' => 
+				'Congraph\Filesystem\Validators\Files\FileGetValidator@validate',
+			'Congraph\Filesystem\Commands\Files\FileServeCommand' => 
+				'Congraph\Filesystem\Validators\Files\FileServeValidator@validate'
 		];
 
 		$this->app->make('Illuminate\Contracts\Bus\Dispatcher')->mapValidators($mappings);
@@ -87,27 +87,27 @@ class ValidatorsServiceProvider extends ServiceProvider {
 	public function registerValidators() {
 
 		// Files
-		$this->app->bind('Cookbook\Filesystem\Validators\Files\FileCreateValidator', function($app){
+		$this->app->bind('Congraph\Filesystem\Validators\Files\FileCreateValidator', function($app){
 			return new FileCreateValidator();
 		});
 
-		$this->app->bind('Cookbook\Filesystem\Validators\Files\FileUpdateValidator', function($app){
+		$this->app->bind('Congraph\Filesystem\Validators\Files\FileUpdateValidator', function($app){
 			return new FileUpdateValidator();
 		});
 
-		$this->app->bind('Cookbook\Filesystem\Validators\Files\FileDeleteValidator', function($app){
+		$this->app->bind('Congraph\Filesystem\Validators\Files\FileDeleteValidator', function($app){
 			return new FileDeleteValidator();
 		});
 
-		$this->app->bind('Cookbook\Filesystem\Validators\Files\FileFetchValidator', function($app){
+		$this->app->bind('Congraph\Filesystem\Validators\Files\FileFetchValidator', function($app){
 			return new FileFetchValidator();
 		});
 
-		$this->app->bind('Cookbook\Filesystem\Validators\Files\FileGetValidator', function($app){
+		$this->app->bind('Congraph\Filesystem\Validators\Files\FileGetValidator', function($app){
 			return new FileGetValidator();
 		});
 
-		$this->app->bind('Cookbook\Filesystem\Validators\Files\FileServeValidator', function($app){
+		$this->app->bind('Congraph\Filesystem\Validators\Files\FileServeValidator', function($app){
 			return new FileServeValidator();
 		});
 
@@ -123,12 +123,12 @@ class ValidatorsServiceProvider extends ServiceProvider {
 	{
 		return [
 			// Files
-			'Cookbook\Filesystem\Validators\Files\FileCreateValidator',
-			'Cookbook\Filesystem\Validators\Files\FileUpdateValidator',
-			'Cookbook\Filesystem\Validators\Files\FileDeleteValidator',
-			'Cookbook\Filesystem\Validators\Files\FileFetchValidator',
-			'Cookbook\Filesystem\Validators\Files\FileGetValidator',
-			'Cookbook\Filesystem\Validators\Files\FileServeValidator',
+			'Congraph\Filesystem\Validators\Files\FileCreateValidator',
+			'Congraph\Filesystem\Validators\Files\FileUpdateValidator',
+			'Congraph\Filesystem\Validators\Files\FileDeleteValidator',
+			'Congraph\Filesystem\Validators\Files\FileFetchValidator',
+			'Congraph\Filesystem\Validators\Files\FileGetValidator',
+			'Congraph\Filesystem\Validators\Files\FileServeValidator',
 
 		];
 	}

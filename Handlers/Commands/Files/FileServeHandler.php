@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/filesystem package.
+ * This file is part of the congraph/filesystem package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Filesystem\Handlers\Commands\Files;
+namespace Congraph\Filesystem\Handlers\Commands\Files;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
-use Cookbook\Filesystem\Commands\Files\FileServeCommand;
+use Congraph\Filesystem\Commands\Files\FileServeCommand;
 use Illuminate\Contracts\Container\Container;
 
 /**
@@ -24,7 +24,7 @@ use Illuminate\Contracts\Container\Container;
  * 
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/filesystem
+ * @package 	congraph/filesystem
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
@@ -54,7 +54,7 @@ class FileServeHandler
 	/**
 	 * Handle FileServeCommand
 	 * 
-	 * @param \Cookbook\Filesystem\Commands\Files\FileServeCommand $command
+	 * @param \Congraph\Filesystem\Commands\Files\FileServeCommand $command
 	 * 
 	 * @return void
 	 */
