@@ -111,6 +111,9 @@ class FileCreateValidator extends Validator
             throw $this->exception;
         }
 
+        if ($command->params['origin'] != 'user' && !WPAuthUser::is('administrator')) {
+            throw new UnauthorizedHttpException('WWW-Authenticate', 'You are not authorized to upload this type of image.');
+        }
         
         $this->setFileInfoParams($command->params);
         
@@ -119,9 +122,6 @@ class FileCreateValidator extends Validator
             $command->params['origin'] = 'user';
         }
 
-        if ($command->params['origin'] != 'user' && !WPAuthUser::is('administrator')) {
-            throw new UnauthorizedHttpException('WWW-Authenticate', 'You are not authorized to upload this type of image.');
-        }
 
         $this->validateParams($command->params, $this->rules, true);
 
@@ -168,7 +168,7 @@ class FileCreateValidator extends Validator
 
         $uploadsUrl = Config::get('cb.files.uploads_path');
 
-        $url = FileHelper::normalizeUrl($uploadsUrl . '/' . $file->getClientOriginalName());
+        $url = FileHelper::normalizeUrl($uploadsUrl . '/' . WPAuthUser::getUserId() . '/' . $file->getClientOriginalName());
 
         $url = FileHelper::uniqueFilename($url);
         // set url
