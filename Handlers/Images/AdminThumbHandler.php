@@ -11,7 +11,8 @@
 namespace Cookbook\Filesystem\Handlers\Images;
 
 use Cookbook\Contracts\Filesystem\ImageVersionHandlerContract;
-use Intervention\Image\ImageManagerStatic as Image;
+use Intervention\Image\Facades\Image;
+
 
 /**
  * AdminThumbHandler class
