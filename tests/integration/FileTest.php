@@ -26,7 +26,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 		]);
 
 		$this->artisan('db:seed', [
-			'--class' => 'Cookbook\Filesystem\Seeders\TestDbSeeder'
+			'--class' => 'Congraph\Filesystem\Seeders\TestDbSeeder'
 		]);
 
 		$this->d = new Dumper();
@@ -75,7 +75,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 			'driver'   	=> 'mysql',
 			'host'      => '127.0.0.1',
 			'port'		=> '3306',
-			'database'	=> 'cookbook_testbench',
+			'database'	=> 'congraph_testbench',
 			'username'  => 'root',
 			'password'  => '',
 			'charset'   => 'utf8',
@@ -100,7 +100,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 		// $config = require(realpath(__DIR__.'/../../config/eav.php'));
 
 		// $app['config']->set(
-		// 	'Cookbook::eav', $config
+		// 	'Congraph::eav', $config
 		// );
 
 		// var_dump('CONFIG SETTED');
@@ -110,8 +110,8 @@ class FileTest extends Orchestra\Testbench\TestCase
 	{
 		return [
 			'Intervention\Image\ImageServiceProvider', 
-			'Cookbook\Core\CoreServiceProvider', 
-			'Cookbook\Filesystem\FilesystemServiceProvider'
+			'Congraph\Core\CoreServiceProvider', 
+			'Congraph\Filesystem\FilesystemServiceProvider'
 		];
 	}
 
@@ -127,7 +127,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 		$app = $this->createApplication();
 		$bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
 		
-		$result = $bus->dispatch( new Cookbook\Filesystem\Commands\Files\FileCreateCommand($params));
+		$result = $bus->dispatch( new Congraph\Filesystem\Commands\Files\FileCreateCommand($params));
 		
 		$this->d->dump($result->toArray());
 		$this->assertTrue(Storage::has('files/test.jpg'));
@@ -135,7 +135,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 	}
 
 	/**
-	 * @expectedException \Cookbook\Core\Exceptions\ValidationException
+	 * @expectedException \Congraph\Core\Exceptions\ValidationException
 	 */
 	public function testCreateException()
 	{
@@ -149,7 +149,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 		$app = $this->createApplication();
 		$bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
 		
-		$result = $bus->dispatch( new Cookbook\Filesystem\Commands\Files\FileCreateCommand($params));
+		$result = $bus->dispatch( new Congraph\Filesystem\Commands\Files\FileCreateCommand($params));
 	}
 
 	public function testUpdateFile()
@@ -164,9 +164,9 @@ class FileTest extends Orchestra\Testbench\TestCase
 			'description' => 'test description'
 		];
 		
-		$result = $bus->dispatch( new Cookbook\Filesystem\Commands\Files\FileUpdateCommand($params, 1) );
+		$result = $bus->dispatch( new Congraph\Filesystem\Commands\Files\FileUpdateCommand($params, 1) );
 		
-		$this->assertTrue($result instanceof Cookbook\Core\Repositories\Model);
+		$this->assertTrue($result instanceof Congraph\Core\Repositories\Model);
 		$this->assertTrue(is_int($result->id));
 		$this->assertEquals($result->caption, 'test file');
 		$this->assertEquals($result->description, 'test description');
@@ -174,7 +174,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 	}
 
 	// /**
-	//  * @expectedException \Cookbook\Core\Exceptions\ValidationException
+	//  * @expectedException \Congraph\Core\Exceptions\ValidationException
 	//  */
 	// public function testUpdateException()
 	// {
@@ -187,7 +187,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 			
 	// 	];
 
-	// 	$result = $bus->dispatch( new Cookbook\Filesystem\Commands\Files\FileUpdateCommand($params, 1) );
+	// 	$result = $bus->dispatch( new Congraph\Filesystem\Commands\Files\FileUpdateCommand($params, 1) );
 	// }
 
 	public function testDeleteFile()
@@ -197,7 +197,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 		$app = $this->createApplication();
 		$bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
 
-		$result = $bus->dispatch( new Cookbook\Filesystem\Commands\Files\FileDeleteCommand([], 1) );
+		$result = $bus->dispatch( new Congraph\Filesystem\Commands\Files\FileDeleteCommand([], 1) );
 
 		$this->assertEquals($result, 1);
 		$this->assertFalse(Storage::has('files/1.jpg'));
@@ -206,7 +206,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 	}
 
 	/**
-	 * @expectedException \Cookbook\Core\Exceptions\NotFoundException
+	 * @expectedException \Congraph\Core\Exceptions\NotFoundException
 	 */
 	public function testDeleteException()
 	{
@@ -215,7 +215,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 		$app = $this->createApplication();
 		$bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
 
-		$result = $bus->dispatch( new Cookbook\Filesystem\Commands\Files\FileDeleteCommand([], 133) );
+		$result = $bus->dispatch( new Congraph\Filesystem\Commands\Files\FileDeleteCommand([], 133) );
 	}
 	
 	public function testFetchFile()
@@ -226,9 +226,9 @@ class FileTest extends Orchestra\Testbench\TestCase
 		$app = $this->createApplication();
 		$bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
 
-		$result = $bus->dispatch( new Cookbook\Filesystem\Commands\Files\FileFetchCommand([], 1));
+		$result = $bus->dispatch( new Congraph\Filesystem\Commands\Files\FileFetchCommand([], 1));
 
-		$this->assertTrue($result instanceof Cookbook\Core\Repositories\Model);
+		$this->assertTrue($result instanceof Congraph\Core\Repositories\Model);
 		$this->assertTrue(is_int($result->id));
 		$this->assertEquals($result->url, 'files/1.jpg');
 		$this->d->dump($result->toArray());
@@ -243,9 +243,9 @@ class FileTest extends Orchestra\Testbench\TestCase
 
 		$app = $this->createApplication();
 		$bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
-		$result = $bus->dispatch( new Cookbook\Filesystem\Commands\Files\FileGetCommand([]));
+		$result = $bus->dispatch( new Congraph\Filesystem\Commands\Files\FileGetCommand([]));
 
-		$this->assertTrue($result instanceof Cookbook\Core\Repositories\Collection);
+		$this->assertTrue($result instanceof Congraph\Core\Repositories\Collection);
 		$this->assertEquals(count($result), 1);
 		$this->d->dump($result->toArray());
 
@@ -257,7 +257,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 
 		$app = $this->createApplication();
 		$bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
-		$content = $bus->dispatch( new Cookbook\Filesystem\Commands\Files\FileServeCommand('files/1.jpg', null));
+		$content = $bus->dispatch( new Congraph\Filesystem\Commands\Files\FileServeCommand('files/1.jpg', null));
 
 		$this->assertEquals(Storage::get('files/1.jpg'), $content);
 	}
@@ -268,7 +268,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 		
 		$app = $this->createApplication();
 		$bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
-		$content = $bus->dispatch( new Cookbook\Filesystem\Commands\Files\FileServeCommand('files/1.jpg', 'admin_thumb'));
+		$content = $bus->dispatch( new Congraph\Filesystem\Commands\Files\FileServeCommand('files/1.jpg', 'admin_thumb'));
 
 		$thumbUrl = realpath(__DIR__ . '/../storage/') . '/files/1.jpg';
 		$thumb = Image::make($thumbUrl);
@@ -284,7 +284,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 	// 	$app = $this->createApplication();
 	// 	$bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
 
-	// 	$result = $bus->dispatch( new Cookbook\Eav\Commands\Attributes\AttributeGetCommand(['sort' => ['-code'], 'limit' => 3, 'offset' => 1]));
+	// 	$result = $bus->dispatch( new Congraph\Eav\Commands\Attributes\AttributeGetCommand(['sort' => ['-code'], 'limit' => 3, 'offset' => 1]));
 
 	// 	$this->assertTrue(is_array($result));
 	// 	$this->assertEquals(count($result), 3);
@@ -301,7 +301,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 
 	// 	$filter = [ 'id' => 5 ];
 
-	// 	$result = $bus->dispatch( new Cookbook\Eav\Commands\Attributes\AttributeGetCommand(['filter' => $filter]));
+	// 	$result = $bus->dispatch( new Congraph\Eav\Commands\Attributes\AttributeGetCommand(['filter' => $filter]));
 
 	// 	$this->d->dump($result);
 		
@@ -312,7 +312,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 
 	// 	$filter = [ 'id' => ['in'=>'5,6,7'] ];
 
-	// 	$result = $bus->dispatch( new Cookbook\Eav\Commands\Attributes\AttributeGetCommand(['filter' => $filter]));
+	// 	$result = $bus->dispatch( new Congraph\Eav\Commands\Attributes\AttributeGetCommand(['filter' => $filter]));
 
 	// 	$this->assertTrue(is_array($result));
 	// 	$this->assertEquals(3, count($result));
@@ -321,7 +321,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 
 	// 	$filter = [ 'id' => ['nin'=>[5,6,7,1]] ];
 
-	// 	$result = $bus->dispatch( new Cookbook\Eav\Commands\Attributes\AttributeGetCommand(['filter' => $filter]));
+	// 	$result = $bus->dispatch( new Congraph\Eav\Commands\Attributes\AttributeGetCommand(['filter' => $filter]));
 
 	// 	$this->assertTrue(is_array($result));
 	// 	$this->assertEquals(3, count($result));
@@ -330,7 +330,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 
 	// 	$filter = [ 'id' => ['lt'=>3] ];
 
-	// 	$result = $bus->dispatch( new Cookbook\Eav\Commands\Attributes\AttributeGetCommand(['filter' => $filter]));
+	// 	$result = $bus->dispatch( new Congraph\Eav\Commands\Attributes\AttributeGetCommand(['filter' => $filter]));
 
 	// 	$this->assertTrue(is_array($result));
 	// 	$this->assertEquals(2, count($result));
@@ -339,7 +339,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 
 	// 	$filter = [ 'id' => ['lte'=>3] ];
 
-	// 	$result = $bus->dispatch( new Cookbook\Eav\Commands\Attributes\AttributeGetCommand(['filter' => $filter]));
+	// 	$result = $bus->dispatch( new Congraph\Eav\Commands\Attributes\AttributeGetCommand(['filter' => $filter]));
 
 	// 	$this->assertTrue(is_array($result));
 	// 	$this->assertEquals(3, count($result));
@@ -348,7 +348,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 
 	// 	$filter = [ 'id' => ['ne'=>3] ];
 
-	// 	$result = $bus->dispatch( new Cookbook\Eav\Commands\Attributes\AttributeGetCommand(['filter' => $filter]));
+	// 	$result = $bus->dispatch( new Congraph\Eav\Commands\Attributes\AttributeGetCommand(['filter' => $filter]));
 
 	// 	$this->assertTrue(is_array($result));
 	// 	$this->assertEquals(6, count($result));

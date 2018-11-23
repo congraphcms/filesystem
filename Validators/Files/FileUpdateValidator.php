@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/filesystem package.
+ * This file is part of the congraph/filesystem package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,11 +8,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Filesystem\Validators\Files;
+namespace Congraph\Filesystem\Validators\Files;
 
-use Cookbook\Core\Bus\RepositoryCommand;
-use Cookbook\Core\Validation\Validator;
-use Cookbook\Core\Helpers\FileHelper;
+use Congraph\Core\Bus\RepositoryCommand;
+use Congraph\Core\Validation\Validator;
+use Congraph\Core\Helpers\FileHelper;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Illuminate\Support\Facades\Config;
 
@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Config;
  * 
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/filesystem
+ * @package 	congraph/filesystem
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
@@ -63,7 +63,7 @@ class FileUpdateValidator extends Validator
 	/**
 	 * Validate RepositoryCommand
 	 * 
-	 * @param Cookbook\Core\Bus\RepositoryCommand $command
+	 * @param Congraph\Core\Bus\RepositoryCommand $command
 	 * 
 	 * @todo  Create custom validation for all db related checks (DO THIS FOR ALL VALIDATORS)
 	 * @todo  Check all db rules | make validators on repositories
@@ -117,7 +117,7 @@ class FileUpdateValidator extends Validator
 	// {
 	// 	$file = $params['file'];
 
-	// 	$uploadsUrl = Config::get('cookbook.uploads_path');
+	// 	$uploadsUrl = Config::get('congraph.uploads_path');
 
 	// 	$url = FileHelper::normalizeUrl($uploadsUrl . '/' . $file->getFilename());
 

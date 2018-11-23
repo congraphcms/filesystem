@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/filesystem package.
+ * This file is part of the congraph/filesystem package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,17 +8,17 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Filesystem\Handlers;
+namespace Congraph\Filesystem\Handlers;
 
 use Illuminate\Support\ServiceProvider;
 
-use Cookbook\Filesystem\Handlers\Commands\Files\FileCreateHandler;
-use Cookbook\Filesystem\Handlers\Commands\Files\FileUpdateHandler;
-use Cookbook\Filesystem\Handlers\Commands\Files\FileDeleteHandler;
-use Cookbook\Filesystem\Handlers\Commands\Files\FileFetchHandler;
-use Cookbook\Filesystem\Handlers\Commands\Files\FileGetHandler;
-use Cookbook\Filesystem\Handlers\Commands\Files\FileServeHandler;
-use Cookbook\Filesystem\Handlers\Images\AdminThumbHandler;
+use Congraph\Filesystem\Handlers\Commands\Files\FileCreateHandler;
+use Congraph\Filesystem\Handlers\Commands\Files\FileUpdateHandler;
+use Congraph\Filesystem\Handlers\Commands\Files\FileDeleteHandler;
+use Congraph\Filesystem\Handlers\Commands\Files\FileFetchHandler;
+use Congraph\Filesystem\Handlers\Commands\Files\FileGetHandler;
+use Congraph\Filesystem\Handlers\Commands\Files\FileServeHandler;
+use Congraph\Filesystem\Handlers\Images\AdminThumbHandler;
 
 /**
  * HandlersServiceProvider service provider for handlers
@@ -29,7 +29,7 @@ use Cookbook\Filesystem\Handlers\Images\AdminThumbHandler;
  * 
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/filesystem
+ * @package 	congraph/filesystem
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
@@ -41,8 +41,8 @@ class HandlersServiceProvider extends ServiceProvider {
 	 * @var array
 	 */
 	protected $listen = [
-		// 'Cookbook\Eav\Events\AttributeSets\AfterAttributeSetFetch' => [
-		// 	'Cookbook\Eav\Handlers\Events\AttributeSets\AfterAttributeSetFetchHandler',
+		// 'Congraph\Eav\Events\AttributeSets\AfterAttributeSetFetch' => [
+		// 	'Congraph\Eav\Handlers\Events\AttributeSets\AfterAttributeSetFetchHandler',
 		// ],
 	];
 
@@ -75,18 +75,18 @@ class HandlersServiceProvider extends ServiceProvider {
 		
 		$mappings = [
 			// Files
-			'Cookbook\Filesystem\Commands\Files\FileCreateCommand' => 
-				'Cookbook\Filesystem\Handlers\Commands\Files\FileCreateHandler@handle',
-			'Cookbook\Filesystem\Commands\Files\FileUpdateCommand' => 
-				'Cookbook\Filesystem\Handlers\Commands\Files\FileUpdateHandler@handle',
-			'Cookbook\Filesystem\Commands\Files\FileDeleteCommand' => 
-				'Cookbook\Filesystem\Handlers\Commands\Files\FileDeleteHandler@handle',
-			'Cookbook\Filesystem\Commands\Files\FileFetchCommand' => 
-				'Cookbook\Filesystem\Handlers\Commands\Files\FileFetchHandler@handle',
-			'Cookbook\Filesystem\Commands\Files\FileGetCommand' => 
-				'Cookbook\Filesystem\Handlers\Commands\Files\FileGetHandler@handle',
-			'Cookbook\Filesystem\Commands\Files\FileServeCommand' => 
-				'Cookbook\Filesystem\Handlers\Commands\Files\FileServeHandler@handle'
+			'Congraph\Filesystem\Commands\Files\FileCreateCommand' => 
+				'Congraph\Filesystem\Handlers\Commands\Files\FileCreateHandler@handle',
+			'Congraph\Filesystem\Commands\Files\FileUpdateCommand' => 
+				'Congraph\Filesystem\Handlers\Commands\Files\FileUpdateHandler@handle',
+			'Congraph\Filesystem\Commands\Files\FileDeleteCommand' => 
+				'Congraph\Filesystem\Handlers\Commands\Files\FileDeleteHandler@handle',
+			'Congraph\Filesystem\Commands\Files\FileFetchCommand' => 
+				'Congraph\Filesystem\Handlers\Commands\Files\FileFetchHandler@handle',
+			'Congraph\Filesystem\Commands\Files\FileGetCommand' => 
+				'Congraph\Filesystem\Handlers\Commands\Files\FileGetHandler@handle',
+			'Congraph\Filesystem\Commands\Files\FileServeCommand' => 
+				'Congraph\Filesystem\Handlers\Commands\Files\FileServeHandler@handle'
 			
 		];
 
@@ -102,31 +102,31 @@ class HandlersServiceProvider extends ServiceProvider {
 		
 		// Files
 		
-		$this->app->bind('Cookbook\Filesystem\Handlers\Commands\Files\FileCreateHandler', function($app){
-			return new FileCreateHandler($app->make('Cookbook\Contracts\Filesystem\FileRepositoryContract'));
+		$this->app->bind('Congraph\Filesystem\Handlers\Commands\Files\FileCreateHandler', function($app){
+			return new FileCreateHandler($app->make('Congraph\Contracts\Filesystem\FileRepositoryContract'));
 		});
 
-		$this->app->bind('Cookbook\Filesystem\Handlers\Commands\Files\FileUpdateHandler', function($app){
-			return new FileUpdateHandler($app->make('Cookbook\Contracts\Filesystem\FileRepositoryContract'));
+		$this->app->bind('Congraph\Filesystem\Handlers\Commands\Files\FileUpdateHandler', function($app){
+			return new FileUpdateHandler($app->make('Congraph\Contracts\Filesystem\FileRepositoryContract'));
 		});
 
-		$this->app->bind('Cookbook\Filesystem\Handlers\Commands\Files\FileDeleteHandler', function($app){
-			return new FileDeleteHandler($app->make('Cookbook\Contracts\Filesystem\FileRepositoryContract'));
+		$this->app->bind('Congraph\Filesystem\Handlers\Commands\Files\FileDeleteHandler', function($app){
+			return new FileDeleteHandler($app->make('Congraph\Contracts\Filesystem\FileRepositoryContract'));
 		});
 
-		$this->app->bind('Cookbook\Filesystem\Handlers\Commands\Files\FileFetchHandler', function($app){
-			return new FileFetchHandler($app->make('Cookbook\Contracts\Filesystem\FileRepositoryContract'));
+		$this->app->bind('Congraph\Filesystem\Handlers\Commands\Files\FileFetchHandler', function($app){
+			return new FileFetchHandler($app->make('Congraph\Contracts\Filesystem\FileRepositoryContract'));
 		});
 
-		$this->app->bind('Cookbook\Filesystem\Handlers\Commands\Files\FileGetHandler', function($app){
-			return new FileGetHandler($app->make('Cookbook\Contracts\Filesystem\FileRepositoryContract'));
+		$this->app->bind('Congraph\Filesystem\Handlers\Commands\Files\FileGetHandler', function($app){
+			return new FileGetHandler($app->make('Congraph\Contracts\Filesystem\FileRepositoryContract'));
 		});
 
-		$this->app->bind('Cookbook\Filesystem\Handlers\Commands\Files\FileServeHandler', function($app){
+		$this->app->bind('Congraph\Filesystem\Handlers\Commands\Files\FileServeHandler', function($app){
 			return new FileServeHandler($app);
 		});
 
-		$this->app->bind('Cookbook\Filesystem\Handlers\Images\AdminThumbHandler', function($app){
+		$this->app->bind('Congraph\Filesystem\Handlers\Images\AdminThumbHandler', function($app){
 			return new AdminThumbHandler();
 		});
 	}
@@ -141,12 +141,12 @@ class HandlersServiceProvider extends ServiceProvider {
 	{
 		return [
 			// Files
-			'Cookbook\Filesystem\Handlers\Commands\Files\FileCreateHandler',
-			'Cookbook\Filesystem\Handlers\Commands\Files\FileUpdateHandler',
-			'Cookbook\Filesystem\Handlers\Commands\Files\FileDeleteHandler',
-			'Cookbook\Filesystem\Handlers\Commands\Files\FileFetchHandler',
-			'Cookbook\Filesystem\Handlers\Commands\Files\FileGetHandler',
-			'Cookbook\Filesystem\Handlers\Commands\Files\FileServeHandler'
+			'Congraph\Filesystem\Handlers\Commands\Files\FileCreateHandler',
+			'Congraph\Filesystem\Handlers\Commands\Files\FileUpdateHandler',
+			'Congraph\Filesystem\Handlers\Commands\Files\FileDeleteHandler',
+			'Congraph\Filesystem\Handlers\Commands\Files\FileFetchHandler',
+			'Congraph\Filesystem\Handlers\Commands\Files\FileGetHandler',
+			'Congraph\Filesystem\Handlers\Commands\Files\FileServeHandler'
 		];
 	}
 }

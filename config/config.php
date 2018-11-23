@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/filesystem package.
+ * This file is part of the congraph/filesystem package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -17,8 +17,8 @@ return array(
 
 	
 	'image_versions' => [
-		'admin_thumb' => 'Cookbook\Filesystem\Handlers\Images\AdminThumbHandler',
-		'admin_image' => 'Cookbook\Filesystem\Handlers\Images\AdminImageHandler'
+		'admin_thumb' => 'Congraph\Filesystem\Handlers\Images\AdminThumbHandler',
+		'admin_image' => 'Congraph\Filesystem\Handlers\Images\AdminImageHandler'
 	],
 
 	'cache_lifetime' => 1440

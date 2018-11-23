@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/filesystem package.
+ * This file is part of the congraph/filesystem package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Filesystem;
+namespace Congraph\Filesystem;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -21,7 +21,7 @@ use Illuminate\Support\ServiceProvider;
  * 
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/filesystem
+ * @package 	congraph/filesystem
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
@@ -58,19 +58,19 @@ class FilesystemServiceProvider extends ServiceProvider {
 
 		// Commands
 		// -----------------------------------------------------------------------------
-		$this->app->register('Cookbook\Filesystem\Commands\CommandsServiceProvider');
+		$this->app->register('Congraph\Filesystem\Commands\CommandsServiceProvider');
 
 		// Handlers
 		// -----------------------------------------------------------------------------
-		$this->app->register('Cookbook\Filesystem\Handlers\HandlersServiceProvider');
+		$this->app->register('Congraph\Filesystem\Handlers\HandlersServiceProvider');
 
 		// Validators
 		// -----------------------------------------------------------------------------
-		$this->app->register('Cookbook\Filesystem\Validators\ValidatorsServiceProvider');
+		$this->app->register('Congraph\Filesystem\Validators\ValidatorsServiceProvider');
 
 		// Repositories
 		// -----------------------------------------------------------------------------
-		$this->app->register('Cookbook\Filesystem\Repositories\RepositoriesServiceProvider');
+		$this->app->register('Congraph\Filesystem\Repositories\RepositoriesServiceProvider');
 
 		
 
