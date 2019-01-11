@@ -71,9 +71,6 @@ class FilesystemServiceProvider extends ServiceProvider {
 		// Repositories
 		// -----------------------------------------------------------------------------
 		$this->app->register('Congraph\Filesystem\Repositories\RepositoriesServiceProvider');
-
-		
-
 		
 	}
 
