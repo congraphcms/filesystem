@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/filesystem package.
+ * This file is part of the congraph/filesystem package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,16 +8,16 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Filesystem\Repositories;
+namespace Congraph\Filesystem\Repositories;
 
-use Cookbook\Contracts\Filesystem\FileRepositoryContract;
-use Cookbook\Core\Exceptions\Exception;
-use Cookbook\Core\Exceptions\NotFoundException;
-use Cookbook\Core\Facades\Trunk;
-use Cookbook\Core\Repositories\AbstractRepository;
-use Cookbook\Core\Repositories\Collection;
-use Cookbook\Core\Repositories\Model;
-use Cookbook\Core\Repositories\UsesCache;
+use Congraph\Contracts\Filesystem\FileRepositoryContract;
+use Congraph\Core\Exceptions\Exception;
+use Congraph\Core\Exceptions\NotFoundException;
+use Congraph\Core\Facades\Trunk;
+use Congraph\Core\Repositories\AbstractRepository;
+use Congraph\Core\Repositories\Collection;
+use Congraph\Core\Repositories\Model;
+use Congraph\Core\Repositories\UsesCache;
 use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\Config;
 use Carbon\Carbon;
@@ -28,11 +28,11 @@ use Carbon\Carbon;
  * Repository for file database queries
  *
  * @uses   		Illuminate\Database\Connection
- * @uses   		Cookbook\Core\Repository\AbstractRepository
- *
+ * @uses   		Congraph\Core\Repository\AbstractRepository
+ * 
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/filesystem
+ * @package 	congraph/filesystem
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
@@ -106,7 +106,7 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
      *
      * @return mixed
      *
-     * @throws Cookbook\Core\Exceptions\NotFoundException
+     * @throws Congraph\Core\Exceptions\NotFoundException
      */
     protected function _update($id, $model)
     {
@@ -136,7 +136,7 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
      *
      * @return boolean
      *
-     * @throws Cookbook\Core\Exceptions\NotFoundException
+     * @throws Congraph\Core\Exceptions\NotFoundException
      */
     protected function _delete($id)
     {

@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/filesystem package.
+ * This file is part of the congraph/filesystem package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Filesystem\Validators\Files;
+namespace Congraph\Filesystem\Validators\Files;
 
-use Cookbook\Core\Exceptions\BadRequestException;
-use Cookbook\Core\Exceptions\NotFoundException;
-use Cookbook\Core\Validation\Validator;
-use Cookbook\Filesystem\Commands\Files\FileServeCommand;
+use Congraph\Core\Exceptions\BadRequestException;
+use Congraph\Core\Exceptions\NotFoundException;
+use Congraph\Core\Validation\Validator;
+use Congraph\Filesystem\Commands\Files\FileServeCommand;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Config;
 
@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Config;
  * 
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/filesystem
+ * @package 	congraph/filesystem
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
@@ -35,7 +35,7 @@ class FileServeValidator
 	/**
 	 * Validate FileServeCommand
 	 * 
-	 * @param \Cookbook\Filesystem\Commands\Files\FileServeCommand $command
+	 * @param \Congraph\Filesystem\Commands\Files\FileServeCommand $command
 	 * 
 	 * @todo  Create custom validation for all db related checks (DO THIS FOR ALL VALIDATORS)
 	 * @todo  Check all db rules | make validators on repositories

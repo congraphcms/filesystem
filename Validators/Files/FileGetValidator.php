@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/filesystem package.
+ * This file is part of the congraph/filesystem package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Filesystem\Validators\Files;
+namespace Congraph\Filesystem\Validators\Files;
 
-use Cookbook\Core\Exceptions\NotFoundException;
-use Cookbook\Core\Exceptions\BadRequestException;
-use Cookbook\Core\Bus\RepositoryCommand;
-use Cookbook\Core\Validation\Validator;
+use Congraph\Core\Exceptions\NotFoundException;
+use Congraph\Core\Exceptions\BadRequestException;
+use Congraph\Core\Bus\RepositoryCommand;
+use Congraph\Core\Validation\Validator;
 
 /**
  * FileGetValidator class
@@ -23,7 +23,7 @@ use Cookbook\Core\Validation\Validator;
  *
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/filesystem
+ * @package 	congraph/filesystem
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
@@ -88,16 +88,16 @@ class FileGetValidator extends Validator
     }
 
 
-    /**
-     * Validate RepositoryCommand
-     *
-     * @param Cookbook\Core\Bus\RepositoryCommand $command
-     *
-     * @todo  Create custom validation for all db related checks (DO THIS FOR ALL VALIDATORS)
-     * @todo  Check all db rules | make validators on repositories
-     *
-     * @return void
-     */
+	/**
+	 * Validate RepositoryCommand
+	 *
+	 * @param Congraph\Core\Bus\RepositoryCommand $command
+	 *
+	 * @todo  Create custom validation for all db related checks (DO THIS FOR ALL VALIDATORS)
+	 * @todo  Check all db rules | make validators on repositories
+	 *
+	 * @return void
+	 */
     public function validate(RepositoryCommand $command)
     {
         if (! empty($command->params['filter'])) {

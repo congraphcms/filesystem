@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the cookbook/filesystem package.
+ * This file is part of the congraph/filesystem package.
  *
  * (c) Nikola Plavšić <nikolaplavsic@gmail.com>
  *
@@ -8,10 +8,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Filesystem\Handlers\Images;
+namespace Congraph\Filesystem\Handlers\Images;
 
 use Cookbook\Contracts\Filesystem\ImageVersionHandlerContract;
-use Intervention\Image\ImageManagerStatic as Image;
+use Intervention\Image\Facades\Image;
 
 /**
  * AdminThumbHandler class
@@ -21,7 +21,7 @@ use Intervention\Image\ImageManagerStatic as Image;
  * 
  * @author  	Nikola Plavšić <nikolaplavsic@gmail.com>
  * @copyright  	Nikola Plavšić <nikolaplavsic@gmail.com>
- * @package 	cookbook/filesystem
+ * @package 	congraph/filesystem
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
