@@ -25,7 +25,7 @@ class BicFileTest extends Orchestra\Testbench\TestCase
         ]);
 
         $this->artisan('db:seed', [
-            '--class' => 'Cookbook\Filesystem\Seeders\BicTestDbSeeder'
+            '--class' => 'Congraph\Filesystem\Seeders\BicTestDbSeeder'
         ]);
 
         $this->d = new Dumper();
@@ -108,8 +108,8 @@ class BicFileTest extends Orchestra\Testbench\TestCase
     {
         return [
             'Intervention\Image\ImageServiceProvider',
-            'Cookbook\Core\CoreServiceProvider',
-            'Cookbook\Filesystem\FilesystemServiceProvider'
+            'Congraph\Core\CoreServiceProvider',
+            'Congraph\Filesystem\FilesystemServiceProvider'
         ];
     }
 
@@ -125,14 +125,14 @@ class BicFileTest extends Orchestra\Testbench\TestCase
         $app = $this->createApplication();
         $bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
         
-        $result = $bus->dispatch(new Cookbook\Filesystem\Commands\Files\FileCreateCommand($params));
+        $result = $bus->dispatch(new Congraph\Filesystem\Commands\Files\FileCreateCommand($params));
         
         $this->d->dump($result->toArray());
         $this->assertTrue(Storage::has('files/test.jpg'));
     }
 
     /**
-     * @expectedException \Cookbook\Core\Exceptions\ValidationException
+     * @expectedException \Congraph\Core\Exceptions\ValidationException
      */
     public function testCreateException()
     {
@@ -146,7 +146,7 @@ class BicFileTest extends Orchestra\Testbench\TestCase
         $app = $this->createApplication();
         $bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
         
-        $result = $bus->dispatch(new Cookbook\Filesystem\Commands\Files\FileCreateCommand($params));
+        $result = $bus->dispatch(new Congraph\Filesystem\Commands\Files\FileCreateCommand($params));
     }
 
     public function testDeleteFile()
@@ -156,7 +156,7 @@ class BicFileTest extends Orchestra\Testbench\TestCase
         $app = $this->createApplication();
         $bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
 
-        $result = $bus->dispatch(new Cookbook\Filesystem\Commands\Files\FileDeleteCommand([], 1));
+        $result = $bus->dispatch(new Congraph\Filesystem\Commands\Files\FileDeleteCommand([], 1));
 
         $this->assertEquals($result, 1);
         $this->assertFalse(Storage::has('files/1.jpg'));
@@ -164,7 +164,7 @@ class BicFileTest extends Orchestra\Testbench\TestCase
     }
 
     /**
-     * @expectedException \Cookbook\Core\Exceptions\NotFoundException
+     * @expectedException \Congraph\Core\Exceptions\NotFoundException
      */
     public function testDeleteException()
     {
@@ -173,7 +173,7 @@ class BicFileTest extends Orchestra\Testbench\TestCase
         $app = $this->createApplication();
         $bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
 
-        $result = $bus->dispatch(new Cookbook\Filesystem\Commands\Files\FileDeleteCommand([], 133));
+        $result = $bus->dispatch(new Congraph\Filesystem\Commands\Files\FileDeleteCommand([], 133));
     }
     
     public function testFetchFile()
@@ -183,9 +183,9 @@ class BicFileTest extends Orchestra\Testbench\TestCase
         $app = $this->createApplication();
         $bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
 
-        $result = $bus->dispatch(new Cookbook\Filesystem\Commands\Files\FileFetchCommand([], 1));
+        $result = $bus->dispatch(new Congraph\Filesystem\Commands\Files\FileFetchCommand([], 1));
 
-        $this->assertTrue($result instanceof Cookbook\Core\Repositories\Model);
+        $this->assertTrue($result instanceof Congraph\Core\Repositories\Model);
         $this->assertTrue(is_int($result->id));
         $this->assertEquals($result->url, 'files/1.jpg');
         $this->d->dump($result->toArray());
@@ -198,9 +198,9 @@ class BicFileTest extends Orchestra\Testbench\TestCase
 
         $app = $this->createApplication();
         $bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
-        $result = $bus->dispatch(new Cookbook\Filesystem\Commands\Files\FileGetCommand([]));
+        $result = $bus->dispatch(new Congraph\Filesystem\Commands\Files\FileGetCommand([]));
 
-        $this->assertTrue($result instanceof Cookbook\Core\Repositories\Collection);
+        $this->assertTrue($result instanceof Congraph\Core\Repositories\Collection);
         $this->assertEquals(count($result), 1);
         $this->d->dump($result->toArray());
     }
@@ -211,7 +211,7 @@ class BicFileTest extends Orchestra\Testbench\TestCase
 
         $app = $this->createApplication();
         $bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
-        $content = $bus->dispatch(new Cookbook\Filesystem\Commands\Files\FileServeCommand('files/1.jpg', null));
+        $content = $bus->dispatch(new Congraph\Filesystem\Commands\Files\FileServeCommand('files/1.jpg', null));
 
         $this->assertEquals(Storage::get('files/1.jpg'), $content);
     }
@@ -222,7 +222,7 @@ class BicFileTest extends Orchestra\Testbench\TestCase
         
     // 	$app = $this->createApplication();
     // 	$bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
-    // 	$content = $bus->dispatch( new Cookbook\Filesystem\Commands\Files\FileServeCommand('files/1.jpg', 'admin_thumb'));
+    // 	$content = $bus->dispatch( new Congraph\Filesystem\Commands\Files\FileServeCommand('files/1.jpg', 'admin_thumb'));
 
     // 	$thumbUrl = realpath(__DIR__ . '/../storage/') . '/files/1.jpg';
     // 	$thumb = Image::make($thumbUrl);

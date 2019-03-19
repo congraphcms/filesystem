@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Cookbook\Filesystem\Seeders;
+namespace Congraph\Filesystem\Seeders;
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Seeder;

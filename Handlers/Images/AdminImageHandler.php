@@ -10,7 +10,7 @@
 
 namespace Congraph\Filesystem\Handlers\Images;
 
-use Cookbook\Contracts\Filesystem\ImageVersionHandlerContract;
+use Congraph\Contracts\Filesystem\ImageVersionHandlerContract;
 use Intervention\Image\Facades\Image;
 
 /**
