@@ -57,6 +57,17 @@ class FileTest extends Orchestra\Testbench\TestCase
 		Storage::deleteDir('files');
 		Storage::deleteDir('uploads');
 
+		$cacheFiles = Storage::files('cache');
+		$cacheDirs = Storage::directories('cache');
+
+		foreach ($cacheFiles as $file) {
+			Storage::delete($file);
+		}
+		foreach ($cacheDirs as $dir) {
+			Storage::deleteDirectory($dir);
+		}
+
+
 
 		parent::tearDown();
 	}
@@ -129,7 +140,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 		
 		$result = $bus->dispatch( new Congraph\Filesystem\Commands\Files\FileCreateCommand($params));
 		
-		$this->d->dump($result->toArray());
+		// $this->d->dump($result->toArray());
 		$this->assertTrue(Storage::has('files/test.jpg'));
 		
 	}
@@ -170,7 +181,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 		$this->assertTrue(is_int($result->id));
 		$this->assertEquals($result->caption, 'test file');
 		$this->assertEquals($result->description, 'test description');
-		$this->d->dump($result->toArray());
+		// $this->d->dump($result->toArray());
 	}
 
 	// /**
@@ -201,7 +212,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 
 		$this->assertEquals($result, 1);
 		$this->assertFalse(Storage::has('files/1.jpg'));
-		$this->d->dump($result);
+		// $this->d->dump($result);
 
 	}
 
@@ -231,9 +242,24 @@ class FileTest extends Orchestra\Testbench\TestCase
 		$this->assertTrue($result instanceof Congraph\Core\Repositories\Model);
 		$this->assertTrue(is_int($result->id));
 		$this->assertEquals($result->url, 'files/1.jpg');
-		$this->d->dump($result->toArray());
-		
+		// $this->d->dump($result->toArray());
+	}
 
+	public function testFetchFileByUrl()
+	{
+
+		fwrite(STDOUT, __METHOD__ . "\n");
+
+		$app = $this->createApplication();
+		$bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
+
+		$result = $bus->dispatch(new Congraph\Filesystem\Commands\Files\FileFetchCommand([], 'files/1.jpg'));
+
+		$this->assertTrue($result instanceof Congraph\Core\Repositories\Model);
+		$this->assertTrue(is_int($result->id));
+		$this->assertEquals( 'files/1.jpg', $result->url);
+		$this->assertEquals(1, $result->id);
+		// $this->d->dump($result->toArray());
 	}
 
 	
@@ -247,7 +273,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 
 		$this->assertTrue($result instanceof Congraph\Core\Repositories\Collection);
 		$this->assertEquals(count($result), 1);
-		$this->d->dump($result->toArray());
+		// $this->d->dump($result->toArray());
 
 	}
 

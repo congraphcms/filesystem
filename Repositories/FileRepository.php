@@ -185,6 +185,10 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
 			return $file;
 		}
 
+		if(!is_numeric($id)) {
+			return $this->fetchByUrl($id, $include);
+		}
+
 		$file = $this->db->table('files')->find($id);
 		
 		if( ! $file )
@@ -199,9 +203,51 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
 		$file->updated_at = Carbon::parse($file->updated_at)->tz($timezone);
 
 		$result = new Model($file);
-		
+
 		$result->setParams($params);
 		$meta = ['id' => $id, 'include' => $include];
+		$result->setMeta($meta);
+		$result->load($include);
+		return $result;
+	}
+
+	/**
+	 * Get file by URL
+	 * 
+	 * @param int $url - URL of file to be fetched
+	 * 
+	 * @return array
+	 */
+	protected function fetchByUrl( $url, $include = [])
+	{
+		$params = func_get_args();
+		$params['function'] = __METHOD__;
+
+		if(Trunk::has($params, 'file')) {
+			$file = Trunk::get( $url, 'file');
+			$file->clearIncluded();
+			$file->load($include);
+			$meta = ['url' => $url, 'include' => $include];
+			$file->setMeta($meta);
+			return $file;
+		}
+
+		$file = $this->db->table('files')->where('url', '=', $url)->first();
+
+		if(!$file) {
+			throw new NotFoundException(['There is no file with that URL.']);
+		}
+
+		$file->type = 'file';
+
+		$timezone = (Config::get('app.timezone'))?Config::get('app.timezone'):'UTC';
+		$file->created_at = Carbon::parse($file->created_at)->tz($timezone);
+		$file->updated_at = Carbon::parse($file->updated_at)->tz($timezone);
+
+		$result = new Model($file);
+		
+		$result->setParams($params);
+		$meta = ['url' => $url, 'include' => $include];
 		$result->setMeta($meta);
 		$result->load($include);
 		return $result;
