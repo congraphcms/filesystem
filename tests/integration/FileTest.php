@@ -285,7 +285,7 @@ class FileTest extends Orchestra\Testbench\TestCase
 		$bus = $app->make('Illuminate\Contracts\Bus\Dispatcher');
 		$content = $bus->dispatch( new Congraph\Filesystem\Commands\Files\FileServeCommand('files/1.jpg', null));
 
-		$this->assertEquals(Storage::get('files/1.jpg'), $content);
+		$this->assertEquals(Storage::get('files/1.jpg'), $content['content']);
 	}
 
 	public function testFileServeVersion()

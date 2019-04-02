@@ -123,7 +123,7 @@ class HandlersServiceProvider extends ServiceProvider {
 		});
 
 		$this->app->bind('Congraph\Filesystem\Handlers\Commands\Files\FileServeHandler', function($app){
-			return new FileServeHandler($app);
+			return new FileServeHandler($app, $app->make('Congraph\Contracts\Filesystem\FileRepositoryContract'));
 		});
 
 		$this->app->bind('Congraph\Filesystem\Handlers\Images\AdminThumbHandler', function($app){

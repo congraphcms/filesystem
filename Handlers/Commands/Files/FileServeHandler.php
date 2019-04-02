@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
 use Congraph\Filesystem\Commands\Files\FileServeCommand;
 use Illuminate\Contracts\Container\Container;
+use Congraph\Contracts\Filesystem\FileRepositoryContract;
+
 
 /**
  * FileServeHandler class
@@ -40,15 +42,27 @@ class FileServeHandler
 
 
 	/**
+	 * File Repository
+	 *
+	 * @var FileRepositoryContract
+	 */
+	protected $repository;
+
+
+	/**
 	 * Create new FileServeHandler
 	 * 
 	 * @param \Illuminate\Contracts\Container\Container $container
+	 * @param FileRepositoryContract $repository
 	 * 
 	 * @return void
 	 */
-	public function __construct(Container $container)
+	public function __construct(
+		Container $container,
+		FileRepositoryContract $repository) 
 	{
 		$this->container = $container;
+		$this->repository = $repository;
 	}
 
 	/**
@@ -61,6 +75,7 @@ class FileServeHandler
 	public function handle(FileServeCommand $command)
 	{
 		// find file and serve its content
+		$fileData = $this->repository->fetch($command->url);
 		$file = Storage::get($command->url);
 
 		if($command->version)
@@ -70,10 +85,16 @@ class FileServeHandler
 			$handler = $this->container->make(Config::get('cb.files.image_versions.' . $command->version));
 			
 			$file = Cache::remember($key, $lifetime, function() use($handler, $file) {
-				return $handler->handle($file);
+				$file = $handler->handle($file);
+
 			});
 		}
 
-		return $file;
+		return [
+            'content' => $file,
+            'mime_type' => $fileData->mime_type || finfo_buffer(finfo_open(FILEINFO_MIME_TYPE), $file),
+            'last_modified' => $fileData->updated_at
+        ];
+;
 	}
 }

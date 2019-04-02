@@ -232,13 +232,34 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
 			return $file;
 		}
 
+		if( substr( $url, 0, 1 ) === '/' ) {
+            $url2 = substr($url, 1, strlen($url));
+        } else {
+            $url2 = '/' . $url;
+        }
+
 		$file = $this->db->table('files')->where('url', '=', $url)->first();
+
+		if(!$file) {
+            $file  = $this->db->table( 'files' )->where('url', '=', $url2)->first();
+        }
 
 		if(!$file) {
 			throw new NotFoundException(['There is no file with that URL.']);
 		}
 
 		$file->type = 'file';
+		// $file->api_url = route('BIC.file.serve', ['file' => trim($file->url, '/')]);
+
+		// if ($file->filetype == 'image') {
+		// 	$versions = Config::get('cb.files.image_versions');
+		// 	if (count($versions) > 0) {
+		// 		$file->versions = [];
+		// 	}
+		// 	foreach ($versions as $version => $handler) {
+		// 		$file->versions[$version] = $file->api_url . '?v=' . $version;
+		// 	}
+        // }
 
 		$timezone = (Config::get('app.timezone'))?Config::get('app.timezone'):'UTC';
 		$file->created_at = Carbon::parse($file->created_at)->tz($timezone);
