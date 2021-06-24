@@ -10,6 +10,7 @@
 
 namespace Congraph\Filesystem\Commands\Files;
 
+use Congraph\Contracts\Filesystem\FileRepositoryContract;
 use Congraph\Core\Bus\RepositoryCommand;
 
 /**
@@ -25,5 +26,33 @@ use Congraph\Core\Bus\RepositoryCommand;
  */
 class FileGetCommand extends RepositoryCommand
 {
+	/**
+	 * Create new FileGetCommand
+	 * 
+	 * @param Congraph\Contracts\Filesystem\FileRepositoryContract $repository
+	 * 
+	 * @return void
+	 */
+	public function __construct(FileRepositoryContract $repository)
+	{
+		parent::__construct($repository);
+	}
 
+	/**
+	 * Handle RepositoryCommand
+	 * 
+	 * @return void
+	 */
+	public function handle()
+	{
+		$files = $this->repository->get(
+			(!empty($this->params['filter']))?$this->params['filter']:[],
+			(!empty($this->params['offset']))?$this->params['offset']:0,
+			(!empty($this->params['limit']))?$this->params['limit']:0,
+			(!empty($this->params['sort']))?$this->params['sort']:[],
+			(!empty($this->params['include']))?$this->params['include']:[]
+		);
+
+		return $files;
+	}
 }

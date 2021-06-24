@@ -10,6 +10,7 @@
 
 namespace Congraph\Filesystem\Commands\Files;
 
+use Congraph\Contracts\Filesystem\FileRepositoryContract;
 use Congraph\Core\Bus\RepositoryCommand;
 
 /**
@@ -25,5 +26,30 @@ use Congraph\Core\Bus\RepositoryCommand;
  */
 class FileFetchCommand extends RepositoryCommand
 {
+	/**
+	 * Create new FileFetchCommand
+	 * 
+	 * @param Congraph\Contracts\Filesystem\FileRepositoryContract $repository
+	 * 
+	 * @return void
+	 */
+	public function __construct(FileRepositoryContract $repository)
+	{
+		parent::__construct($repository);
+	}
 
+	/**
+	 * Handle RepositoryCommand
+	 * 
+	 * @return void
+	 */
+	public function handle()
+	{
+		$file = $this->repository->fetch(
+			$this->id, 
+			(!empty($this->params['include']))?$this->params['include']:[]
+		);
+
+		return $file;
+	}
 }

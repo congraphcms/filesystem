@@ -45,19 +45,18 @@ class FileGetHandler extends RepositoryCommandHandler
 
 	/**
 	 * Handle RepositoryCommand
-	 * 
-	 * @param Congraph\Core\Bus\RepositoryCommand $command
+	 
 	 * 
 	 * @return void
 	 */
-	public function handle(RepositoryCommand $command)
+	public function handle()
 	{
 		$files = $this->repository->get(
-			(!empty($command->params['filter']))?$command->params['filter']:[],
-			(!empty($command->params['offset']))?$command->params['offset']:0,
-			(!empty($command->params['limit']))?$command->params['limit']:0,
-			(!empty($command->params['sort']))?$command->params['sort']:[],
-			(!empty($command->params['include']))?$command->params['include']:[]
+			(!empty($this->params['filter']))?$this->params['filter']:[],
+			(!empty($this->params['offset']))?$this->params['offset']:0,
+			(!empty($this->params['limit']))?$this->params['limit']:0,
+			(!empty($this->params['sort']))?$this->params['sort']:[],
+			(!empty($this->params['include']))?$this->params['include']:[]
 		);
 
 		return $files;

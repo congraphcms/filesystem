@@ -10,7 +10,9 @@
 
 namespace Congraph\Filesystem\Commands\Files;
 
+use Congraph\Contracts\Filesystem\FileRepositoryContract;
 use Congraph\Core\Bus\RepositoryCommand;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * FileCreateCommand class
@@ -25,5 +27,29 @@ use Congraph\Core\Bus\RepositoryCommand;
  */
 class FileCreateCommand extends RepositoryCommand
 {
+	/**
+	 * Create new FileCreateCommand
+	 * 
+	 * @param Congraph\Contracts\Filesystem\FileRepositoryContract $repository
+	 * 
+	 * @return void
+	 */
+	public function __construct(FileRepositoryContract $repository)
+	{
+		parent::__construct($repository);
+	}
 
+    /**
+	 * Handle RepositoryCommand
+	 * 
+	 * @return void
+	 */
+	public function handle()
+	{
+		$file = $this->repository->create($this->params);
+
+		Storage::put($file->url, file_get_contents($this->params['file']->getRealPath()));
+
+		return $file;
+	}
 }

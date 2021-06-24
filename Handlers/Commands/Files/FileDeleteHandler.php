@@ -45,14 +45,13 @@ class FileDeleteHandler extends RepositoryCommandHandler
 
 	/**
 	 * Handle RepositoryCommand
-	 * 
-	 * @param Congraph\Core\Bus\RepositoryCommand $command
+	 
 	 * 
 	 * @return void
 	 */
-	public function handle(RepositoryCommand $command)
+	public function handle()
 	{
-		$file = $this->repository->delete($command->id);
+		$file = $this->repository->delete($this->id);
 
 		try
 		{

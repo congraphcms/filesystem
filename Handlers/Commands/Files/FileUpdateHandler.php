@@ -45,16 +45,15 @@ class FileUpdateHandler extends RepositoryCommandHandler
 
 	/**
 	 * Handle RepositoryCommand
-	 * 
-	 * @param Congraph\Core\Bus\RepositoryCommand $command
+	 
 	 * 
 	 * @return void
 	 */
-	public function handle(RepositoryCommand $command)
+	public function handle()
 	{
-		$file = $this->repository->update($command->id, $command->params);
+		$file = $this->repository->update($this->id, $this->params);
 
-		// Storage::put($file->url, file_get_contents($command->params['file']->getRealPath()));
+		// Storage::put($file->url, file_get_contents($this->params['file']->getRealPath()));
 
 		return $file;
 	}

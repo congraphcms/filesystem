@@ -75,14 +75,14 @@ class FileServeHandler
 	public function handle(FileServeCommand $command)
 	{
 		// find file and serve its content
-		$fileData = $this->repository->fetch($command->url);
-		$file = Storage::get($command->url);
+		$fileData = $this->repository->fetch($this->url);
+		$file = Storage::get($this->url);
 
-		if($command->version)
+		if($this->version)
 		{
-			$key = md5(serialize(['url' => $command->url, 'version' => $command->version]));
+			$key = md5(serialize(['url' => $this->url, 'version' => $this->version]));
 			$lifetime = Config::get('cb.files.cache_lifetime');
-			$handler = $this->container->make(Config::get('cb.files.image_versions.' . $command->version));
+			$handler = $this->container->make(Config::get('cb.files.image_versions.' . $this->version));
 			
 			$file = Cache::remember($key, $lifetime, function() use($handler, $file) {
 				$file = $handler->handle($file);
