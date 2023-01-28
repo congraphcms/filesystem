@@ -71,7 +71,7 @@ class FileServeValidator
 			: strval($command->params['version']);
 
 		if( ! is_null($command->params['version'])
-			&& ! in_array(Storage::getMimetype($command->id), $imageMimeTypes) )
+			&& ! in_array(Storage::mimeType($command->id), $imageMimeTypes) )
 		{
 			$e = new BadRequestException();
 			$e->setErrorKey('version');

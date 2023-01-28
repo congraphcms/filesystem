@@ -98,8 +98,8 @@ class FileTest extends Orchestra\Testbench\TestCase
 			'--class' => 'TestDbSeeder'
 		]);
 
-		Storage::deleteDir('files');
-		Storage::deleteDir('uploads');
+		Storage::deleteDirectory('files');
+		Storage::deleteDirectory('uploads');
 
 		Storage::copy('temp/test.jpg', 'uploads/test.jpg');
 
@@ -111,8 +111,8 @@ class FileTest extends Orchestra\Testbench\TestCase
 			'--class' => 'ClearDB'
 		]);
 
-		Storage::deleteDir('files');
-		Storage::deleteDir('uploads');
+		Storage::deleteDirectory('files');
+		Storage::deleteDirectory('uploads');
 
 		$cacheFiles = Storage::files('cache');
 		$cacheDirs = Storage::directories('cache');
