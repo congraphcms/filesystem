@@ -45,8 +45,9 @@ class FileServeValidator
 	public function validate(FileServeCommand $command)
 	{
 		$imageMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
-		$command->url = str_replace('..', '', strval($command->url));
-		if( empty($command->url) )
+		$command->id = str_replace('..', '', strval($command->id));
+		
+		if( empty($command->id) )
 		{
 			$e = new BadRequestException();
 			$e->setErrorKey('url');
@@ -55,7 +56,7 @@ class FileServeValidator
 			throw $e;
 		}
 
-		if( ! Storage::has($command->url) )
+		if( ! Storage::has($command->id) )
 		{
 			$e = new NotFoundException();
 			$e->setErrorKey('url');
@@ -64,9 +65,13 @@ class FileServeValidator
 			throw $e;
 		}
 
-		$command->version = (is_null($command->version))?$command->version:strval($command->version);
+		$command->params['version'] = 
+			(empty($command->params) || empty($command->params['version']))
+			? null
+			: strval($command->params['version']);
 
-		if( ! is_null($command->version) && ! in_array(Storage::getMimetype($command->url), $imageMimeTypes) )
+		if( ! is_null($command->params['version'])
+			&& ! in_array(Storage::mimeType($command->id), $imageMimeTypes) )
 		{
 			$e = new BadRequestException();
 			$e->setErrorKey('version');
@@ -75,7 +80,8 @@ class FileServeValidator
 			throw $e;
 		}
 
-		if( ! is_null($command->version) && ! array_key_exists($command->version, Config::get('cb.files.image_versions')) )
+		if( ! is_null($command->params['version'])
+			&& ! array_key_exists($command->params['version'], Config::get('cb.files.image_versions')) )
 		{
 			$e = new BadRequestException();
 			$e->setErrorKey('version');

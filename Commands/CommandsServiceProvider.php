@@ -12,6 +12,13 @@ namespace Congraph\Filesystem\Commands;
 
 use Illuminate\Support\ServiceProvider;
 
+use Congraph\Filesystem\Commands\Files\FileCreateCommand;
+use Congraph\Filesystem\Commands\Files\FileUpdateCommand;
+use Congraph\Filesystem\Commands\Files\FileDeleteCommand;
+use Congraph\Filesystem\Commands\Files\FileFetchCommand;
+use Congraph\Filesystem\Commands\Files\FileGetCommand;
+use Congraph\Filesystem\Commands\Files\FileServeCommand;
+
 /**
  * CommandsServiceProvider service provider for commands
  * 
@@ -45,12 +52,36 @@ class CommandsServiceProvider extends ServiceProvider {
 	}
 
 	/**
-	* Register Command Handlers
+	* Register Commands
 	*
 	* @return void
 	*/
 	public function registerCommands() {
+		// Files
 		
+		$this->app->bind('Congraph\Filesystem\Commands\Files\FileCreateCommand', function($app){
+			return new FileCreateCommand($app->make('Congraph\Contracts\Filesystem\FileRepositoryContract'));
+		});
+
+		$this->app->bind('Congraph\Filesystem\Commands\Files\FileUpdateCommand', function($app){
+			return new FileUpdateCommand($app->make('Congraph\Contracts\Filesystem\FileRepositoryContract'));
+		});
+
+		$this->app->bind('Congraph\Filesystem\Commands\Files\FileDeleteCommand', function($app){
+			return new FileDeleteCommand($app->make('Congraph\Contracts\Filesystem\FileRepositoryContract'));
+		});
+
+		$this->app->bind('Congraph\Filesystem\Commands\Files\FileFetchCommand', function($app){
+			return new FileFetchCommand($app->make('Congraph\Contracts\Filesystem\FileRepositoryContract'));
+		});
+
+		$this->app->bind('Congraph\Filesystem\Commands\Files\FileGetCommand', function($app){
+			return new FileGetCommand($app->make('Congraph\Contracts\Filesystem\FileRepositoryContract'));
+		});
+
+		$this->app->bind('Congraph\Filesystem\Commands\Files\FileServeCommand', function($app){
+			return new FileServeCommand($app, $app->make('Congraph\Contracts\Filesystem\FileRepositoryContract'));
+		});
 	}
 
 	/**
@@ -61,7 +92,13 @@ class CommandsServiceProvider extends ServiceProvider {
 	public function provides()
 	{
 		return [
-			
+			// Files
+			'Congraph\Filesystem\Commands\Files\FileCreateCommand',
+			'Congraph\Filesystem\Commands\Files\FileUpdateCommand',
+			'Congraph\Filesystem\Commands\Files\FileDeleteCommand',
+			'Congraph\Filesystem\Commands\Files\FileFetchCommand',
+			'Congraph\Filesystem\Commands\Files\FileGetCommand',
+			'Congraph\Filesystem\Commands\Files\FileServeCommand',
 		];
 	}
 }

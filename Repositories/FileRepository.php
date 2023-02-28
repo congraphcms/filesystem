@@ -308,6 +308,8 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
 		
 		$files = $query->get();
 
+		$files = $files->toArray();
+
 		if( ! $files )
 		{
 			$files = [];

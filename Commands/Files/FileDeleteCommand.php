@@ -10,7 +10,9 @@
 
 namespace Congraph\Filesystem\Commands\Files;
 
+use Congraph\Contracts\Filesystem\FileRepositoryContract;
 use Congraph\Core\Bus\RepositoryCommand;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * FileDeleteCommand class
@@ -25,5 +27,33 @@ use Congraph\Core\Bus\RepositoryCommand;
  */
 class FileDeleteCommand extends RepositoryCommand
 {
+	/**
+	 * Create new FileDeleteCommand
+	 * 
+	 * @param Congraph\Contracts\Filesystem\FileRepositoryContract $repository
+	 * 
+	 * @return void
+	 */
+	public function __construct(FileRepositoryContract $repository)
+	{
+		parent::__construct($repository);
+	}
 
+	/**
+	 * Handle RepositoryCommand
+	 * 
+	 * @return void
+	 */
+	public function handle()
+	{
+		$file = $this->repository->delete($this->id);
+
+		try
+		{
+			Storage::delete($file->url);
+		}
+		catch(\League\Flysystem\FileNotFoundException $e){}
+
+		return $file->id;
+	}
 }

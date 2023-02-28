@@ -57,6 +57,7 @@ class FileCreateValidator extends Validator
 			'size'					=> 'required|integer',
 			'caption'				=> '',
 			'description'			=> '',
+            'owner_id'              => 'sometimes|integer',
 			'file'					=> ''
 		];
 
