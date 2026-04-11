@@ -177,7 +177,7 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
 		
 		if(Trunk::has($params, 'file'))
 		{
-			$file = Trunk::get($id, 'file');
+			$file = Trunk::get($params, 'file');
 			$file->clearIncluded();
 			$file->load($include);
 			$meta = ['id' => $id, 'include' => $include];
@@ -224,7 +224,7 @@ class FileRepository extends AbstractRepository implements FileRepositoryContrac
 		$params['function'] = __METHOD__;
 
 		if(Trunk::has($params, 'file')) {
-			$file = Trunk::get( $url, 'file');
+			$file = Trunk::get($params, 'file');
 			$file->clearIncluded();
 			$file->load($include);
 			$meta = ['url' => $url, 'include' => $include];

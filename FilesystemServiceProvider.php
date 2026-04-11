@@ -10,6 +10,10 @@
 
 namespace Congraph\Filesystem;
 
+use Congraph\Filesystem\Commands\CommandsServiceProvider;
+use Congraph\Filesystem\Handlers\HandlersServiceProvider;
+use Congraph\Filesystem\Repositories\RepositoriesServiceProvider;
+use Congraph\Filesystem\Validators\ValidatorsServiceProvider;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -58,19 +62,19 @@ class FilesystemServiceProvider extends ServiceProvider {
 
 		// Commands
 		// -----------------------------------------------------------------------------
-		$this->app->register('Congraph\Filesystem\Commands\CommandsServiceProvider');
+		$this->app->register(CommandsServiceProvider::class);
 
 		// Handlers
 		// -----------------------------------------------------------------------------
-		$this->app->register('Congraph\Filesystem\Handlers\HandlersServiceProvider');
+		$this->app->register(HandlersServiceProvider::class);
 
 		// Validators
 		// -----------------------------------------------------------------------------
-		$this->app->register('Congraph\Filesystem\Validators\ValidatorsServiceProvider');
+		$this->app->register(ValidatorsServiceProvider::class);
 
 		// Repositories
 		// -----------------------------------------------------------------------------
-		$this->app->register('Congraph\Filesystem\Repositories\RepositoriesServiceProvider');
+		$this->app->register(RepositoriesServiceProvider::class);
 
 		
 

@@ -10,6 +10,7 @@
 
 namespace Congraph\Filesystem\Handlers;
 
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
 use Congraph\Filesystem\Handlers\Images\AdminThumbHandler;
@@ -28,13 +29,7 @@ use Congraph\Filesystem\Handlers\Images\AdminImageHandler;
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
-class HandlersServiceProvider extends ServiceProvider {
-	/**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-	protected $defer = true;
+class HandlersServiceProvider extends ServiceProvider implements DeferrableProvider {
 
 	/**
 	 * The event listener mappings for package.
@@ -74,10 +69,10 @@ class HandlersServiceProvider extends ServiceProvider {
 	 */
 	public function registerCommandHandlers() {
 
-		$this->app->bind('Congraph\Filesystem\Handlers\Images\AdminThumbHandler', function($app){
+		$this->app->bind(AdminThumbHandler::class, function($app){
 			return new AdminThumbHandler();
 		});
-		$this->app->bind('Congraph\Filesystem\Handlers\Images\AdminImageHandler', function($app){
+		$this->app->bind(AdminImageHandler::class, function($app){
 			return new AdminImageHandler();
 		});
 	}
@@ -91,8 +86,8 @@ class HandlersServiceProvider extends ServiceProvider {
 	public function provides()
 	{
 		return [
-			'Congraph\Filesystem\Handlers\Images\AdminThumbHandler',
-			'Congraph\Filesystem\Handlers\Images\AdminImageHandler'
+			AdminThumbHandler::class,
+			AdminImageHandler::class,
 		];
 	}
 }

@@ -10,6 +10,9 @@
 
 namespace Congraph\Filesystem\Commands;
 
+use Congraph\Contracts\Filesystem\FileRepositoryContract;
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
 use Congraph\Filesystem\Commands\Files\FileCreateCommand;
@@ -32,14 +35,7 @@ use Congraph\Filesystem\Commands\Files\FileServeCommand;
  * @since 		0.1.0-alpha
  * @version  	0.1.0-alpha
  */
-class CommandsServiceProvider extends ServiceProvider {
-
-	/**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-	protected $defer = true;
+class CommandsServiceProvider extends ServiceProvider implements DeferrableProvider {
 
 
 	/**
@@ -59,28 +55,28 @@ class CommandsServiceProvider extends ServiceProvider {
 	public function registerCommands() {
 		// Files
 		
-		$this->app->bind('Congraph\Filesystem\Commands\Files\FileCreateCommand', function($app){
-			return new FileCreateCommand($app->make('Congraph\Contracts\Filesystem\FileRepositoryContract'));
+		$this->app->bind(FileCreateCommand::class, function($app){
+			return new FileCreateCommand($app->make(FileRepositoryContract::class));
 		});
 
-		$this->app->bind('Congraph\Filesystem\Commands\Files\FileUpdateCommand', function($app){
-			return new FileUpdateCommand($app->make('Congraph\Contracts\Filesystem\FileRepositoryContract'));
+		$this->app->bind(FileUpdateCommand::class, function($app){
+			return new FileUpdateCommand($app->make(FileRepositoryContract::class));
 		});
 
-		$this->app->bind('Congraph\Filesystem\Commands\Files\FileDeleteCommand', function($app){
-			return new FileDeleteCommand($app->make('Congraph\Contracts\Filesystem\FileRepositoryContract'));
+		$this->app->bind(FileDeleteCommand::class, function($app){
+			return new FileDeleteCommand($app->make(FileRepositoryContract::class));
 		});
 
-		$this->app->bind('Congraph\Filesystem\Commands\Files\FileFetchCommand', function($app){
-			return new FileFetchCommand($app->make('Congraph\Contracts\Filesystem\FileRepositoryContract'));
+		$this->app->bind(FileFetchCommand::class, function($app){
+			return new FileFetchCommand($app->make(FileRepositoryContract::class));
 		});
 
-		$this->app->bind('Congraph\Filesystem\Commands\Files\FileGetCommand', function($app){
-			return new FileGetCommand($app->make('Congraph\Contracts\Filesystem\FileRepositoryContract'));
+		$this->app->bind(FileGetCommand::class, function($app){
+			return new FileGetCommand($app->make(FileRepositoryContract::class));
 		});
 
-		$this->app->bind('Congraph\Filesystem\Commands\Files\FileServeCommand', function($app){
-			return new FileServeCommand($app, $app->make('Congraph\Contracts\Filesystem\FileRepositoryContract'));
+		$this->app->bind(FileServeCommand::class, function($app){
+			return new FileServeCommand($app->make(Container::class), $app->make(FileRepositoryContract::class));
 		});
 	}
 
@@ -93,12 +89,12 @@ class CommandsServiceProvider extends ServiceProvider {
 	{
 		return [
 			// Files
-			'Congraph\Filesystem\Commands\Files\FileCreateCommand',
-			'Congraph\Filesystem\Commands\Files\FileUpdateCommand',
-			'Congraph\Filesystem\Commands\Files\FileDeleteCommand',
-			'Congraph\Filesystem\Commands\Files\FileFetchCommand',
-			'Congraph\Filesystem\Commands\Files\FileGetCommand',
-			'Congraph\Filesystem\Commands\Files\FileServeCommand',
+			FileCreateCommand::class,
+			FileUpdateCommand::class,
+			FileDeleteCommand::class,
+			FileFetchCommand::class,
+			FileGetCommand::class,
+			FileServeCommand::class,
 		];
 	}
 }

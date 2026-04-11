@@ -10,6 +10,8 @@
 
 namespace Congraph\Filesystem\Repositories;
 
+use Congraph\Contracts\Core\ObjectResolverContract;
+use Congraph\Contracts\Filesystem\FileRepositoryContract;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -26,13 +28,6 @@ use Illuminate\Support\ServiceProvider;
  * @version  	0.1.0-alpha
  */
 class RepositoriesServiceProvider extends ServiceProvider {
-
-	/**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-	protected $defer = true;
 
 	/**
 	 * Boot
@@ -58,14 +53,14 @@ class RepositoriesServiceProvider extends ServiceProvider {
 	 * @return void
 	 */
 	public function registerRepositories() {
-		$this->app->singleton('Congraph\Filesystem\Repositories\FileRepository', function($app) {
+		$this->app->singleton(FileRepository::class, function($app) {
 			return new FileRepository(
 				$app['db']->connection()
 			);
 		});
 
 		$this->app->alias(
-			'Congraph\Filesystem\Repositories\FileRepository', 'Congraph\Contracts\Filesystem\FileRepositoryContract'
+			FileRepository::class, FileRepositoryContract::class
 		);
 	}
 
@@ -76,10 +71,10 @@ class RepositoriesServiceProvider extends ServiceProvider {
 	 */
 	public function mapObjectResolvers() {
 		$mappings = [
-			'file' => 'Congraph\Filesystem\Repositories\FileRepository',
+			'file' => FileRepository::class,
 		];
 
-		$this->app->make('Congraph\Contracts\Core\ObjectResolverContract')->maps($mappings);
+		$this->app->make(ObjectResolverContract::class)->maps($mappings);
 	}
 
 	/**
@@ -90,8 +85,8 @@ class RepositoriesServiceProvider extends ServiceProvider {
 	public function provides()
 	{
 		return [
-			'Congraph\Filesystem\Repositories\FileRepository',
-			'Congraph\Contracts\Filesystem\FileRepositoryContract'
+			FileRepository::class,
+			FileRepositoryContract::class,
 		];
 	}
 

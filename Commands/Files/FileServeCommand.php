@@ -78,9 +78,8 @@ class FileServeCommand extends RepositoryCommand
 
 		return [
             'content' => $file,
-            'mime_type' => $fileData->mime_type || finfo_buffer(finfo_open(FILEINFO_MIME_TYPE), $file),
+            'mime_type' => $fileData->mime_type ?: finfo_buffer(finfo_open(FILEINFO_MIME_TYPE), $file),
             'last_modified' => $fileData->updated_at
         ];
-;
 	}
 }

@@ -1,331 +1,163 @@
 <?php
 
-use Illuminate\Support\Facades\Cache;
-use Symfony\Component\VarDumper\VarDumper as Dumper;
+require_once __DIR__ . '/../Fixtures/DatabaseTestCase.php';
 
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Congraph\Core\Exceptions\NotFoundException;
+use Congraph\Core\Exceptions\ValidationException;
+use Congraph\Core\Repositories\Collection;
+use Congraph\Core\Repositories\Model;
+use Congraph\Filesystem\Commands\Files\FileCreateCommand;
+use Congraph\Filesystem\Commands\Files\FileDeleteCommand;
+use Congraph\Filesystem\Commands\Files\FileFetchCommand;
+use Congraph\Filesystem\Commands\Files\FileGetCommand;
+use Congraph\Filesystem\Commands\Files\FileServeCommand;
+use Congraph\Filesystem\Commands\Files\FileUpdateCommand;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\Laravel\Facades\Image;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-require_once(__DIR__ . '/../database/seeders/TestDbSeeder.php');
-require_once(__DIR__ . '/../database/seeders/ClearDB.php');
-
-class FileTest extends Orchestra\Testbench\TestCase
+final class FileTest extends DatabaseTestCase
 {
-
-	// ----------------------------------------
-    // ENVIRONMENT
-    // ----------------------------------------
-
-    protected function getPackageProviders($app)
+	protected function seeders(): array
 	{
 		return [
-			'Intervention\Image\ImageServiceProvider', 
-			'Congraph\Core\CoreServiceProvider', 
-			'Congraph\Filesystem\FilesystemServiceProvider'
+			Database\Seeders\TestDbSeeder::class,
 		];
 	}
 
-    /**
-	 * Define environment setup.
-	 *
-	 * @param  \Illuminate\Foundation\Application  $app
-	 *
-	 * @return void
-	 */
-	protected function defineEnvironment($app)
+	protected function cleanupSeeders(): array
 	{
-		$app['config']->set('database.default', 'testbench');
-		$app['config']->set('database.connections.testbench', [
-			'driver'   	=> 'mysql',
-			'host'      => '127.0.0.1',
-			'port'		=> '3306',
-			'database'	=> 'congraph_testbench',
-			'username'  => 'root',
-			'password'  => '',
-			'charset'   => 'utf8',
-			'collation' => 'utf8_unicode_ci',
-			'prefix'    => '',
-		]);
-
-		$app['config']->set('cache.default', 'file');
-
-		$app['config']->set('cache.stores.file', [
-			'driver'	=> 'file',
-			'path'   	=> realpath(__DIR__ . '/../storage/cache/'),
-		]);
-
-		$app['config']->set('filesystems.default', 'local');
-
-		$app['config']->set('filesystems.disks.local', [
-			'driver'	=> 'local',
-			'root'   	=> realpath(__DIR__ . '/../storage/'),
-		]);
-
+		return [
+			Database\Seeders\ClearDB::class,
+		];
 	}
 
-    // ----------------------------------------
-    // DATABASE
-    // ----------------------------------------
-
-    /**
-     * Define database migrations.
-     *
-     * @return void
-     */
-    protected function defineDatabaseMigrations()
-    {
-        $this->loadMigrationsFrom(realpath(__DIR__.'/../../database/migrations'));
-
-        $this->artisan('migrate', ['--database' => 'testbench'])->run();
-
-        $this->beforeApplicationDestroyed(function () {
-            $this->artisan('migrate:rollback', ['--database' => 'testbench'])->run();
-        });
-    }
-
-
-    // ----------------------------------------
-    // SETUP
-    // ----------------------------------------
-
-    public function setUp(): void {
-		parent::setUp();
-
-		$this->d = new Dumper();
-
-        $this->artisan('db:seed', [
-			'--class' => 'TestDbSeeder'
-		]);
-
-		Storage::deleteDirectory('files');
-		Storage::deleteDirectory('uploads');
-
-		Storage::copy('temp/test.jpg', 'uploads/test.jpg');
-
-		Storage::copy('temp/test.jpg', 'files/1.jpg');
-	}
-
-	public function tearDown(): void {
-		$this->artisan('db:seed', [
-			'--class' => 'ClearDB'
-		]);
-
-		Storage::deleteDirectory('files');
-		Storage::deleteDirectory('uploads');
-
-		$cacheFiles = Storage::files('cache');
-		$cacheDirs = Storage::directories('cache');
-
-		foreach ($cacheFiles as $file) {
-			Storage::delete($file);
-		}
-		foreach ($cacheDirs as $dir) {
-			Storage::deleteDirectory($dir);
-		}
-		parent::tearDown();
-	}
-
-    // ----------------------------------------
-    // TESTS **********************************
-    // ----------------------------------------
-
-	public function testCreateFile()
+	public function testCreateFile(): void
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-
-		$params = [
+		$command = $this->app->make(FileCreateCommand::class);
+		$command->setParams([
 			'file' => new UploadedFile(
 				realpath(__DIR__ . '/../storage/uploads/test.jpg'),
 				'test.jpg',
 				'image/jpeg',
 				null,
 				true
-			)
-		];
+			),
+		]);
 
+		$result = $this->dispatch($command);
 
-		$app = $this->createApplication();
-		$bus = $app->make('Congraph\Core\Bus\CommandDispatcher');
-		$command = $app->make(\Congraph\Filesystem\Commands\Files\FileCreateCommand::class);
-		$command->setParams($params);
-
-		try {
-			$result = $bus->dispatch($command);
-		} catch(\Congraph\Core\Exceptions\ValidationException $e) {
-			$this->d->dump($e->getErrors());
-		}
-		
-		// $this->d->dump($result->toArray());
-		$this->assertTrue(Storage::has('files/test.jpg'));
-		
+		$this->assertInstanceOf(Model::class, $result);
+		$this->assertTrue(Storage::exists('files/test.jpg'));
 	}
 
-	
-	public function testCreateException()
+	public function testCreateFileThrowsValidationException(): void
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		$this->expectException(ValidationException::class);
 
-		$this->expectException(\Congraph\Core\Exceptions\ValidationException::class);
-
-		$params = [
+		$command = $this->app->make(FileCreateCommand::class);
+		$command->setParams([
 			'file' => new UploadedFile(
 				realpath(__DIR__ . '/../storage/uploads/test.jpg'),
 				'test.jpg',
 				'image/jpeg'
-			)
-		];
+			),
+		]);
 
-
-		$app = $this->createApplication();
-		$bus = $app->make('Congraph\Core\Bus\CommandDispatcher');
-		$command = $app->make(\Congraph\Filesystem\Commands\Files\FileCreateCommand::class);
-		$command->setParams($params);
-
-		$result = $bus->dispatch($command);
+		$this->dispatch($command);
 	}
 
-	public function testUpdateFile()
+	public function testUpdateFile(): void
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-		
-		$params = [
+		$command = $this->app->make(FileUpdateCommand::class);
+		$command->setId(1);
+		$command->setParams([
 			'caption' => 'test file',
-			'description' => 'test description'
-		];
+			'description' => 'test description',
+		]);
 
-		$app = $this->createApplication();
-		$bus = $app->make('Congraph\Core\Bus\CommandDispatcher');
-		$command = $app->make(\Congraph\Filesystem\Commands\Files\FileUpdateCommand::class);
-		$command->setParams($params);
-		$command->setId(1);
+		$result = $this->dispatch($command);
 
-		$result = $bus->dispatch($command);
-		
-		$this->assertTrue($result instanceof Congraph\Core\Repositories\Model);
-		$this->assertTrue(is_int($result->id));
-		$this->assertEquals($result->caption, 'test file');
-		$this->assertEquals($result->description, 'test description');
-		// $this->d->dump($result->toArray());
+		$this->assertInstanceOf(Model::class, $result);
+		$this->assertSame('test file', $result->caption);
+		$this->assertSame('test description', $result->description);
 	}
 
-	public function testDeleteFile()
+	public function testDeleteFile(): void
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-
-		$app = $this->createApplication();
-		$bus = $app->make('Congraph\Core\Bus\CommandDispatcher');
-		$command = $app->make(\Congraph\Filesystem\Commands\Files\FileDeleteCommand::class);
+		$command = $this->app->make(FileDeleteCommand::class);
 		$command->setId(1);
 
-		$result = $bus->dispatch($command);
+		$result = $this->dispatch($command);
 
-		$this->assertEquals($result, 1);
-		$this->assertFalse(Storage::has('files/1.jpg'));
-		// $this->d->dump($result);
-
+		$this->assertSame(1, $result);
+		$this->assertFalse(Storage::exists('files/1.jpg'));
 	}
 
-	
-	public function testDeleteException()
+	public function testDeleteFileThrowsWhenMissing(): void
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		$this->expectException(NotFoundException::class);
 
-		$this->expectException(\Congraph\Core\Exceptions\NotFoundException::class);
-
-		$app = $this->createApplication();
-		$bus = $app->make('Congraph\Core\Bus\CommandDispatcher');
-		$command = $app->make(\Congraph\Filesystem\Commands\Files\FileDeleteCommand::class);
+		$command = $this->app->make(FileDeleteCommand::class);
 		$command->setId(133);
 
-		$result = $bus->dispatch($command);
+		$this->dispatch($command);
 	}
-	
-	public function testFetchFile()
+
+	public function testFetchFileById(): void
 	{
-
-		fwrite(STDOUT, __METHOD__ . "\n");
-
-		$app = $this->createApplication();
-		$bus = $app->make('Congraph\Core\Bus\CommandDispatcher');
-		$command = $app->make(\Congraph\Filesystem\Commands\Files\FileFetchCommand::class);
+		$command = $this->app->make(FileFetchCommand::class);
 		$command->setId(1);
 
-		$result = $bus->dispatch($command);
+		$result = $this->dispatch($command);
 
-		$this->assertTrue($result instanceof Congraph\Core\Repositories\Model);
-		$this->assertTrue(is_int($result->id));
-		$this->assertEquals($result->url, 'files/1.jpg');
-		// $this->d->dump($result->toArray());
+		$this->assertInstanceOf(Model::class, $result);
+		$this->assertSame('files/1.jpg', $result->url);
 	}
 
-	public function testFetchFileByUrl()
+	public function testFetchFileByUrl(): void
 	{
-
-		fwrite(STDOUT, __METHOD__ . "\n");
-
-		$app = $this->createApplication();
-		$bus = $app->make('Congraph\Core\Bus\CommandDispatcher');
-		$command = $app->make(\Congraph\Filesystem\Commands\Files\FileFetchCommand::class);
+		$command = $this->app->make(FileFetchCommand::class);
 		$command->setId('files/1.jpg');
 
-		$result = $bus->dispatch($command);
+		$result = $this->dispatch($command);
 
-		$this->assertTrue($result instanceof Congraph\Core\Repositories\Model);
-		$this->assertTrue(is_int($result->id));
-		$this->assertEquals( 'files/1.jpg', $result->url);
-		$this->assertEquals(1, $result->id);
-		// $this->d->dump($result->toArray());
+		$this->assertInstanceOf(Model::class, $result);
+		$this->assertSame(1, $result->id);
+		$this->assertSame('files/1.jpg', $result->url);
 	}
 
-	
-	public function testGetFiles()
+	public function testGetFiles(): void
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		$command = $this->app->make(FileGetCommand::class);
 
-		$app = $this->createApplication();
-		$bus = $app->make('Congraph\Core\Bus\CommandDispatcher');
-		$command = $app->make(\Congraph\Filesystem\Commands\Files\FileGetCommand::class);
+		$result = $this->dispatch($command);
 
-		$result = $bus->dispatch($command);
-
-		$this->assertTrue($result instanceof Congraph\Core\Repositories\Collection);
-		$this->assertEquals(count($result), 1);
-		// $this->d->dump($result->toArray());
-
+		$this->assertInstanceOf(Collection::class, $result);
+		$this->assertCount(1, $result);
 	}
 
-	public function testFileServe()
+	public function testServeOriginalFile(): void
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-
-		$app = $this->createApplication();
-		$bus = $app->make('Congraph\Core\Bus\CommandDispatcher');
-		$command = $app->make(\Congraph\Filesystem\Commands\Files\FileServeCommand::class);
+		$command = $this->app->make(FileServeCommand::class);
 		$command->setId('files/1.jpg');
 
-		$result = $bus->dispatch($command);
+		$result = $this->dispatch($command);
 
-		$this->assertEquals(Storage::get('files/1.jpg'), $result['content']);
+		$this->assertSame(Storage::get('files/1.jpg'), $result['content']);
+		$this->assertSame('image/jpeg', $result['mime_type']);
 	}
 
-	public function testFileServeVersion()
+	public function testServeVersionedImage(): void
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-		
-		$app = $this->createApplication();
-		$bus = $app->make('Congraph\Core\Bus\CommandDispatcher');
-		$command = $app->make(\Congraph\Filesystem\Commands\Files\FileServeCommand::class);
+		$command = $this->app->make(FileServeCommand::class);
+		$command->setId('files/1.jpg');
 		$command->setParams(['version' => 'admin_thumb']);
-		$command->setId('files/1.jpg');
 
-		$result = $bus->dispatch($command);
+		$result = $this->dispatch($command);
 
-		$thumbUrl = realpath(__DIR__ . '/../storage/') . '/files/1.jpg';
-		$thumb = Image::make($thumbUrl);
-		$thumb->fit(50, 50);
-		$thumbContent = (string) $thumb->encode();
-		$this->assertEquals($thumbContent, $result['content']);
+		$thumb = Image::read(realpath(__DIR__ . '/../storage/files/1.jpg'));
+		$thumb = $thumb->coverDown(50, 50);
+		$this->assertSame((string) $thumb->encode(), $result['content']);
 	}
-
 }

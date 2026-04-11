@@ -10,6 +10,13 @@
 
 namespace Congraph\Filesystem\Validators;
 
+use Congraph\Filesystem\Commands\Files\FileCreateCommand;
+use Congraph\Filesystem\Commands\Files\FileDeleteCommand;
+use Congraph\Filesystem\Commands\Files\FileFetchCommand;
+use Congraph\Filesystem\Commands\Files\FileGetCommand;
+use Congraph\Filesystem\Commands\Files\FileServeCommand;
+use Congraph\Filesystem\Commands\Files\FileUpdateCommand;
+use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Support\ServiceProvider;
 
 use Congraph\Filesystem\Validators\Files\FileCreateValidator;
@@ -62,21 +69,15 @@ class ValidatorsServiceProvider extends ServiceProvider {
 		
 		$mappings = [
 			// Files
-			'Congraph\Filesystem\Commands\Files\FileCreateCommand' => 
-				'Congraph\Filesystem\Validators\Files\FileCreateValidator@validate',
-			'Congraph\Filesystem\Commands\Files\FileUpdateCommand' => 
-				'Congraph\Filesystem\Validators\Files\FileUpdateValidator@validate',
-			'Congraph\Filesystem\Commands\Files\FileDeleteCommand' => 
-				'Congraph\Filesystem\Validators\Files\FileDeleteValidator@validate',
-			'Congraph\Filesystem\Commands\Files\FileFetchCommand' => 
-				'Congraph\Filesystem\Validators\Files\FileFetchValidator@validate',
-			'Congraph\Filesystem\Commands\Files\FileGetCommand' => 
-				'Congraph\Filesystem\Validators\Files\FileGetValidator@validate',
-			'Congraph\Filesystem\Commands\Files\FileServeCommand' => 
-				'Congraph\Filesystem\Validators\Files\FileServeValidator@validate'
+			FileCreateCommand::class => FileCreateValidator::class . '@validate',
+			FileUpdateCommand::class => FileUpdateValidator::class . '@validate',
+			FileDeleteCommand::class => FileDeleteValidator::class . '@validate',
+			FileFetchCommand::class => FileFetchValidator::class . '@validate',
+			FileGetCommand::class => FileGetValidator::class . '@validate',
+			FileServeCommand::class => FileServeValidator::class . '@validate'
 		];
 
-		$this->app->make('Illuminate\Contracts\Bus\Dispatcher')->mapValidators($mappings);
+		$this->app->make(Dispatcher::class)->mapValidators($mappings);
 	}
 
 	/**
@@ -87,27 +88,27 @@ class ValidatorsServiceProvider extends ServiceProvider {
 	public function registerValidators() {
 
 		// Files
-		$this->app->bind('Congraph\Filesystem\Validators\Files\FileCreateValidator', function($app){
+		$this->app->bind(FileCreateValidator::class, function($app){
 			return new FileCreateValidator();
 		});
 
-		$this->app->bind('Congraph\Filesystem\Validators\Files\FileUpdateValidator', function($app){
+		$this->app->bind(FileUpdateValidator::class, function($app){
 			return new FileUpdateValidator();
 		});
 
-		$this->app->bind('Congraph\Filesystem\Validators\Files\FileDeleteValidator', function($app){
+		$this->app->bind(FileDeleteValidator::class, function($app){
 			return new FileDeleteValidator();
 		});
 
-		$this->app->bind('Congraph\Filesystem\Validators\Files\FileFetchValidator', function($app){
+		$this->app->bind(FileFetchValidator::class, function($app){
 			return new FileFetchValidator();
 		});
 
-		$this->app->bind('Congraph\Filesystem\Validators\Files\FileGetValidator', function($app){
+		$this->app->bind(FileGetValidator::class, function($app){
 			return new FileGetValidator();
 		});
 
-		$this->app->bind('Congraph\Filesystem\Validators\Files\FileServeValidator', function($app){
+		$this->app->bind(FileServeValidator::class, function($app){
 			return new FileServeValidator();
 		});
 
@@ -123,12 +124,12 @@ class ValidatorsServiceProvider extends ServiceProvider {
 	{
 		return [
 			// Files
-			'Congraph\Filesystem\Validators\Files\FileCreateValidator',
-			'Congraph\Filesystem\Validators\Files\FileUpdateValidator',
-			'Congraph\Filesystem\Validators\Files\FileDeleteValidator',
-			'Congraph\Filesystem\Validators\Files\FileFetchValidator',
-			'Congraph\Filesystem\Validators\Files\FileGetValidator',
-			'Congraph\Filesystem\Validators\Files\FileServeValidator',
+			FileCreateValidator::class,
+			FileUpdateValidator::class,
+			FileDeleteValidator::class,
+			FileFetchValidator::class,
+			FileGetValidator::class,
+			FileServeValidator::class,
 
 		];
 	}

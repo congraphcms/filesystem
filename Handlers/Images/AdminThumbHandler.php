@@ -11,7 +11,7 @@
 namespace Congraph\Filesystem\Handlers\Images;
 
 use Congraph\Contracts\Filesystem\ImageVersionHandlerContract;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\Laravel\Facades\Image;
 
 
 /**
@@ -38,8 +38,9 @@ class AdminThumbHandler implements ImageVersionHandlerContract
 	 */
 	public function handle($imageData)
 	{
-		$image = Image::make($imageData);
-		$image->fit(50, 50);
+		$image = Image::read($imageData);
+		$image = $image->coverDown(50, 50);
+
 		return (string) $image->encode();
 	}
 }

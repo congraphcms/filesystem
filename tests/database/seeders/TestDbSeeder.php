@@ -31,10 +31,11 @@ class TestDbSeeder extends Seeder {
 
 	public function run()
 	{
-		DB::table('files')->truncate();
+		DB::table('files')->delete();
 
 		DB::table('files')->insert([
 			[
+				'id' => 1,
 				'url' => 'files/1.jpg',
 				'name' => '1.jpg',
 				'extension' => 'jpg',
@@ -47,7 +48,34 @@ class TestDbSeeder extends Seeder {
 			]
 		]);
 
-	
+		$this->syncSequence('files', 2);
 	}
 
+	private function syncSequence(string $table, int $nextId): void
+	{
+		$driver = DB::getDriverName();
+
+		if ($driver === 'pgsql') {
+			DB::statement(
+				"SELECT setval(pg_get_serial_sequence('{$table}', 'id'), ?, false)",
+				[$nextId]
+			);
+			return;
+		}
+
+		if ($driver === 'sqlite') {
+			try {
+				DB::table('sqlite_sequence')->updateOrInsert(
+					['name' => $table],
+					['seq' => $nextId - 1]
+				);
+			} catch (\Throwable $e) {
+			}
+			return;
+		}
+
+		if ($driver === 'mysql') {
+			DB::statement("ALTER TABLE {$table} AUTO_INCREMENT = {$nextId}");
+		}
+	}
 }
